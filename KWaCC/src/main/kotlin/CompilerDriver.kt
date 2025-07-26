@@ -24,8 +24,18 @@ class CompilerDriver {
 
         file.inputStream().use { inputStream ->
             val lexer = Lexer(inputStream)
-            val tokens = lexer.tokenize()
-            println("Tokens generated: ${tokens.joinToString(", ")}")
+            val result = lexer.tokenize()
+            if (result.hasErrors) {
+                println("Lexer encountered errors:")
+                for (error in result.errors) {
+                    println("Error at line ${error.line}, " +
+                            "column ${error.column}:" +
+                            " ${error.message}" +
+                            " ${error.character?.let { " (character: '$it')" } ?: ""}")
+                }
+                return 1
+            }
+            println("Tokens generated: ${result.tokens.joinToString(", ")}")
         }
         return 0
     }

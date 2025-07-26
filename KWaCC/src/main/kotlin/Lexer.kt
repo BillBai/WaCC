@@ -3,12 +3,27 @@ package me.billbai.compiler.kwacc
 import java.io.InputStream
 
 class Lexer(private val inputStream: InputStream) {
+    data class LexerError(
+        val message: String,
+        val line: Int,
+        val column: Int,
+        val character: Char? = null
+    )
+
+    data class TokenizeResult(
+        val tokens: List<Token>,
+        val errors: List<LexerError>
+    ) {
+        val hasErrors: Boolean get() = errors.isNotEmpty()
+        val isSuccessful: Boolean get() = !hasErrors
+    }
+
     private var curColumn: Int = 0
     private var curLine: Int = 1
     private var curCharCode: Int = 0
     private var curChar: Char = 0.toChar()
 
-    private fun readChar() {
+    private fun advance() {
         curCharCode = inputStream.read()
         curChar = curCharCode.toChar()
         if (curCharCode == -1) {
@@ -30,67 +45,110 @@ class Lexer(private val inputStream: InputStream) {
         }
     }
 
-    private fun nextToken(): Token? {
+    private sealed class TokenResult {
+        data class Success(val token: Token) : TokenResult()
+        data class Error(val error: LexerError) : TokenResult()
+    }
+    private fun nextToken(): TokenResult {
         try {
             while (curCharCode != -1 && curChar.isWhitespace()) {
-                readChar()
+                advance()
             }
 
             if (curCharCode == -1) {
-                return Token.EndOfFile
+                return TokenResult.Success(Token.EndOfFile)
             }
 
             if (curChar.isLetter() || curChar == '_') {
                 val builder = StringBuilder()
                 do {
                     builder.append(curChar)
-                    readChar()
+                    advance()
                 } while(curCharCode != -1 && (curChar.isLetterOrDigit() || curChar == '_'))
                 val identOrKeyword = builder.toString()
-                return makeIdentOrKeyword(identOrKeyword)
+                return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
             } else if (curChar.isDigit()) {
                 val builder = StringBuilder()
                 do {
                     builder.append(curChar)
-                    readChar()
-                } while (curCharCode != -1 && (curChar.isDigit()))
-                return Token.Constant(builder.toString())
+                    advance()
+                } while (curCharCode != -1 && curChar.isDigit())
+
+                // Check for invalid number format (number followed by letter)
+                if (curCharCode != -1 && curChar.isLetter()) {
+                    val invalidBuilder = StringBuilder(builder.toString())
+                    do {
+                        invalidBuilder.append(curChar)
+                        advance()
+                    } while (curCharCode != -1 && curChar.isLetterOrDigit())
+
+                    return TokenResult.Error(
+                        LexerError(
+                            "Invalid number format: '${invalidBuilder}'",
+                            curLine,
+                            curColumn
+                        )
+                    )
+                }
+
+                return TokenResult.Success(Token.Constant(builder.toString()))
             } else {
-                val token = when (curChar) {
-                    '(' ->  Token.OpenParen
-                    ')' ->  Token.CloseParen
-                    '{' ->  Token.OpenBrace
-                    '}' ->  Token.CloseBrace
-                    ';' ->  Token.Semicolon
+                val tokenResult = when (curChar) {
+                    '(' ->  TokenResult.Success(Token.OpenParen)
+                    ')' ->  TokenResult.Success(Token.CloseParen)
+                    '{' ->  TokenResult.Success(Token.OpenBrace)
+                    '}' ->  TokenResult.Success(Token.CloseBrace)
+                    ';' ->  TokenResult.Success(Token.Semicolon)
                     else -> {
-                        println("Error: Invalid char $curChar ($curCharCode) for lexer")
-                        null
+                        TokenResult.Error(
+                            LexerError(
+                                "Unexpected character '$curChar'",
+                                curLine,
+                                curColumn,
+                                curChar
+                            )
+                        )
                     }
                 }
-                readChar()
-                return token
+                advance()
+                return tokenResult
             }
          } catch (e: Exception) {
-            println("Error reading input stream: ${e.message}")
-            return null
+            return TokenResult.Error(
+                LexerError(
+                    "IO error while reading input: ${e.message}",
+                    curLine,
+                    curColumn
+                )
+            )
         }
     }
 
-    fun tokenize(): List<Token> {
-        readChar()
+    fun tokenize(): TokenizeResult {
+        advance()
         val tokens = mutableListOf<Token>()
-        do {
-            val token = nextToken()
-            if (token == null) {
-                println("Invalid token at position ${inputStream.available()}")
-                break
-            }
-            tokens.add(token)
-            if (token.tokenType == Token.TokenType.EOF) {
-                break
-            }
-        } while (true)
-        return tokens
-    }
+        val errors = mutableListOf<LexerError>()
 
+        do {
+            when (val result = nextToken()) {
+                is TokenResult.Success -> {
+                    tokens.add(result.token)
+                    if (result.token.tokenType == Token.TokenType.EOF) {
+                        break
+                    }
+                }
+                is TokenResult.Error -> {
+                    errors.add(result.error)
+                    // Continue tokenizing after error to collect more potential errors
+                }
+            }
+        } while (curCharCode != -1)
+
+        // Ensure we always have an EOF token
+        if (tokens.isEmpty() || tokens.last().tokenType != Token.TokenType.EOF) {
+            tokens.add(Token.EndOfFile)
+        }
+
+        return TokenizeResult(tokens, errors)
+    }
 }
