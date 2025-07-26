@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run LEX Mode KWaCC" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="Kotlin SDK" />
+    <option name="MAIN_CLASS_NAME" value="me.billbai.compiler.kwacc.MainKt" />
+    <module name="KWaCC.main" />
+    <option name="PROGRAM_PARAMETERS" value="--lex" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
