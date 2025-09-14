@@ -22,9 +22,9 @@ sealed class Token(val tokenType: TokenType) {
         RETURN,
     }
 
-    class Identifier(val value: String) : Token(TokenType.IDENTIFIER)
-    class Constant(val value: String) : Token(TokenType.CONSTANT)
-    class Keyword(val keywordType: KeywordType) : Token(TokenType.KEYWORD)
+    data class Identifier(val value: String) : Token(TokenType.IDENTIFIER)
+    data class Constant(val value: String) : Token(TokenType.CONSTANT)
+    data class Keyword(val keywordType: KeywordType) : Token(TokenType.KEYWORD)
 
     object OpenParen : Token(TokenType.OPEN_PAREN)
     object CloseParen : Token(TokenType.CLOSE_PAREN)

@@ -30,7 +30,7 @@ class CPreprocessor(
      */
     fun preprocess(inputFilePath: String, outputFilePath: String): Boolean {
         val command = mutableListOf(compilerPath, "-E", "-P", inputFilePath, "-o", outputFilePath)
-        command.addAll(extraArgs)
+        command.addAll(extraArgs)  
 
         println("Running preprocessor command: ${command.joinToString(" ")}")
 

@@ -1,8 +1,13 @@
 package me.billbai.compiler.kwacc
 
+import java.io.BufferedReader
 import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.ArrayDeque
 
-class Lexer(private val inputStream: InputStream) {
+class Lexer(inputStream: InputStream) {
+    private val reader = BufferedReader(InputStreamReader(inputStream))
+    private val peekBuffer = ArrayDeque<Char>()
     data class LexerError(
         val message: String,
         val line: Int,
@@ -24,8 +29,15 @@ class Lexer(private val inputStream: InputStream) {
     private var curChar: Char = 0.toChar()
 
     private fun advance() {
-        curCharCode = inputStream.read()
-        curChar = curCharCode.toChar()
+        if (peekBuffer.isNotEmpty()) {
+            val ch = peekBuffer.removeFirst()
+            curCharCode = ch.code
+            curChar = ch
+        } else {
+            curCharCode = reader.read()
+            curChar = curCharCode.toChar()
+        }
+        
         if (curCharCode == -1) {
             return
         }
@@ -36,6 +48,17 @@ class Lexer(private val inputStream: InputStream) {
         }
     }
 
+    private fun peek(): Char {
+        if (peekBuffer.isEmpty()) {
+            val nextCharCode = reader.read()
+            if (nextCharCode == -1) {
+                return (-1).toChar()
+            }
+            peekBuffer.addLast(nextCharCode.toChar())
+        }
+        return peekBuffer.first()
+    }
+
     private fun makeIdentOrKeyword(identOrKeyword: String): Token {
         return when (identOrKeyword) {
             "int" -> Token.Keyword(Token.KeywordType.INT)
@@ -43,6 +66,49 @@ class Lexer(private val inputStream: InputStream) {
             "return" -> Token.Keyword(Token.KeywordType.RETURN)
             else -> Token.Identifier(identOrKeyword)
         }
+    }
+
+    private fun lexIdentifierOrKeyword(): TokenResult {
+        check((curChar.isLetter() || curChar == '_')) {
+            "lexIdentifierOrKeyword called on invalid input: '$curChar'"
+        }
+
+        val builder = StringBuilder()
+        do {
+            builder.append(curChar)
+            advance()
+        } while(curCharCode != -1 && (curChar.isLetterOrDigit() || curChar == '_'))
+        val identOrKeyword = builder.toString()
+        return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
+    }
+
+    private fun lexNumbers(): TokenResult {
+        check(curChar.isDigit()) { "lexNumbers() called on non-digit: '$curChar'"}
+        val builder = StringBuilder()
+        do {
+            builder.append(curChar)
+            advance()
+        } while (curCharCode != -1 && curChar.isDigit())
+
+        // Check for invalid number format (number followed by letter)
+        val peekedChar = peek()
+        if (peekedChar.code != -1 && peekedChar.isLetter()) {
+            val invalidBuilder = StringBuilder(builder.toString())
+            do {
+                invalidBuilder.append(curChar)
+                advance()
+            } while (curCharCode != -1 && curChar.isLetterOrDigit())
+
+            return TokenResult.Error(
+                LexerError(
+                    "Invalid number format: '${invalidBuilder}'",
+                    curLine,
+                    curColumn
+                )
+            )
+        }
+
+        return TokenResult.Success(Token.Constant(builder.toString()))
     }
 
     private sealed class TokenResult {
@@ -60,38 +126,9 @@ class Lexer(private val inputStream: InputStream) {
             }
 
             if (curChar.isLetter() || curChar == '_') {
-                val builder = StringBuilder()
-                do {
-                    builder.append(curChar)
-                    advance()
-                } while(curCharCode != -1 && (curChar.isLetterOrDigit() || curChar == '_'))
-                val identOrKeyword = builder.toString()
-                return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
+                return lexIdentifierOrKeyword()
             } else if (curChar.isDigit()) {
-                val builder = StringBuilder()
-                do {
-                    builder.append(curChar)
-                    advance()
-                } while (curCharCode != -1 && curChar.isDigit())
-
-                // Check for invalid number format (number followed by letter)
-                if (curCharCode != -1 && curChar.isLetter()) {
-                    val invalidBuilder = StringBuilder(builder.toString())
-                    do {
-                        invalidBuilder.append(curChar)
-                        advance()
-                    } while (curCharCode != -1 && curChar.isLetterOrDigit())
-
-                    return TokenResult.Error(
-                        LexerError(
-                            "Invalid number format: '${invalidBuilder}'",
-                            curLine,
-                            curColumn
-                        )
-                    )
-                }
-
-                return TokenResult.Success(Token.Constant(builder.toString()))
+                return lexNumbers()
             } else {
                 val tokenResult = when (curChar) {
                     '(' ->  TokenResult.Success(Token.OpenParen)
