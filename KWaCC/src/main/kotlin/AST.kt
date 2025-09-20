@@ -44,10 +44,10 @@ data class ReturnStmt(val expression: Expression?) : Statement() {
 }
 
 // Expressions
-sealed class Expression : ASTNode()
-data class IntConstant(val value: String) : Expression() {
+sealed class Expression(val type: Type) : ASTNode()
+data class IntConstant(val value: String) : Expression(IntType) {
     override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIntConstant(this)
 }
-data class Identifier(val name: String) : Expression() {
+data class Identifier(val name: String, val identifierType: Type) : Expression(identifierType) {
     override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIdentifier(this)
 }

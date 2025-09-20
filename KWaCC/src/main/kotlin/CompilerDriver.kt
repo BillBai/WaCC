@@ -1,6 +1,7 @@
 package me.billbai.compiler.kwacc
 
 import java.io.File
+import java.io.InputStream
 
 class CompilerDriver {
     enum class Mode {
@@ -13,6 +14,7 @@ class CompilerDriver {
     private var mode: Mode = Mode.DEFAULT
     private var emitAssembly: Boolean = false
     private var inputFile: String? = null
+
 
     fun runLexMode(inputFilePath: String): Int {
         println("Running in Lex mode...")
@@ -40,9 +42,44 @@ class CompilerDriver {
         return 0
     }
 
-    fun runParseMode(): Int {
+    fun runParseMode(inputFilePath: String): Int {
         println("Running in Parse mode...")
-        // Implement Parse mode logic here
+        val file = File(inputFilePath)
+        if (!file.exists()) {
+            println("Error: Input file '$inputFilePath' does not exist.")
+            return 1
+        }
+
+        file.inputStream().use { inputStream ->
+            val lexer = Lexer(inputStream)
+            val lexResult = lexer.tokenize()
+            if (lexResult.hasErrors) {
+                println("Lexer encountered errors:")
+                for (error in lexResult.errors) {
+                    println("Error at line ${error.line}, " +
+                            "column ${error.column}:" +
+                            " ${error.message}" +
+                            " ${error.character?.let { " (character: '$it')" } ?: ""}")
+                }
+                return 1
+            }
+            val parser = Parser(lexResult.tokens)
+            val parseResult = parser.parse()
+            if (parseResult.errors.isNotEmpty()) {
+                println("Parser errors: ")
+                for (error in parseResult.errors) {
+                    println("${error.message} -- ${error.token?.toString()}")
+                }
+                return 1
+            }
+            val ast = parseResult.ast;
+            if (ast == null) {
+                println("null program?")
+                return 1
+            }
+            val astPrinter = ASTPrettyPrinter()
+            ast.accept(astPrinter)
+        }
         return 0
     }
 
@@ -119,7 +156,7 @@ class CompilerDriver {
         // Run the appropriate mode based on the arguments
         val retCode = when (mode) {
             Mode.LEX -> runLexMode(preprocessedFilePath)
-            Mode.PARSE -> runParseMode()
+            Mode.PARSE -> runParseMode(preprocessedFilePath)
             Mode.CODEGEN -> runCodeGenMode()
             else -> runDefaultMode()
         }
