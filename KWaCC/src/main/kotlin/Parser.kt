@@ -1,7 +1,5 @@
 package me.billbai.compiler.kwacc
 
-import javax.swing.plaf.nimbus.State
-
 class Parser(
     private var tokens: List<Token>
 ) {
@@ -79,29 +77,29 @@ class Parser(
         }
 
         // Parse function name (identifier)
-        if (!check(Token.TokenType.IDENTIFIER)) {
+        if (!checkTokenType(Token.TokenType.IDENTIFIER)) {
             addError("Expected function name")
             return null
         }
         val nameToken = advance() as Token.Identifier
 
         // Parse '('
-        if (!check(Token.TokenType.OPEN_PAREN)) {
+        if (!checkTokenType(Token.TokenType.OPEN_PAREN)) {
             addError("Expected '(' after function name")
             return null
         }
         advance()
 
         // Parse optional 'void'
-        val funcParamTypeToken = peek()
-        if (funcParamTypeToken is Token.Keyword) {
-            if (funcParamTypeToken.keywordType == Token.KeywordType.VOID) {
-                advance()
+        val funcParamType = parseType()
+        if (funcParamType != null) {
+            if (funcParamType != VoidType) {
+                addError("Only support 'void' type for function param type")
             }
         }
 
         // For now, no parameters - just parse ')'
-        if (!check(Token.TokenType.CLOSE_PAREN)) {
+        if (!checkTokenType(Token.TokenType.CLOSE_PAREN)) {
             addError("Expected ')' - parameters not supported yet")
             return null
         }
@@ -117,13 +115,13 @@ class Parser(
         return FunctionDefinition(type, nameToken.value, emptyList(), body)
     }
 
-    private fun check(tokenType: Token.TokenType): Boolean {
+    private fun checkTokenType(tokenType: Token.TokenType): Boolean {
         if (isAtEnd()) return false
         return peek().tokenType == tokenType
     }
 
     private fun parseBlockStatement(): BlockStmt? {
-        if (!check(Token.TokenType.OPEN_BRACE)) {
+        if (!checkTokenType(Token.TokenType.OPEN_BRACE)) {
             addError("Expected '{'")
             return null
         }
@@ -131,7 +129,7 @@ class Parser(
 
         val statements = mutableListOf<Statement>()
 
-        while (!check(Token.TokenType.CLOSE_BRACE) && !isAtEnd()) {
+        while (!checkTokenType(Token.TokenType.CLOSE_BRACE) && !isAtEnd()) {
             val stmt = parseStatement()
             if (stmt != null) {
                 statements.add(stmt)
@@ -140,7 +138,7 @@ class Parser(
             }
         }
 
-        if (!check(Token.TokenType.CLOSE_BRACE)) {
+        if (!checkTokenType(Token.TokenType.CLOSE_BRACE)) {
             addError("Expect '}'")
             return null;
         }
@@ -160,18 +158,23 @@ class Parser(
     }
 
     private fun parseReturnStatement(): ReturnStmt? {
+        val token = peek()
+        check(token is Token.Keyword && token.keywordType == Token.KeywordType.RETURN) {
+            "Must start with 'return' token"
+        }
+
         // Consume 'return'
         advance()
 
         var expression: Expression? = null
 
         // Check if there's an expression before ';'
-        if (!check(Token.TokenType.SEMICOLON)) {
+        if (!checkTokenType(Token.TokenType.SEMICOLON)) {
             expression = parseExpression()
         }
 
         // Parse ';'
-        if (!check(Token.TokenType.SEMICOLON)) {
+        if (!checkTokenType(Token.TokenType.SEMICOLON)) {
             addError("Expected ';' after return statement")
             return null
         }

@@ -16,27 +16,50 @@ class CompilerDriver {
     private var inputFile: String? = null
 
 
-    fun runLexMode(inputFilePath: String): Int {
-        println("Running in Lex mode...")
+    private fun validateFile(inputFilePath: String): Boolean {
         val file = File(inputFilePath)
         if (!file.exists()) {
             println("Error: Input file '$inputFilePath' does not exist.")
-            return 1
+            return false
         }
+        return true
+    }
 
-        file.inputStream().use { inputStream ->
-            val lexer = Lexer(inputStream)
-            val result = lexer.tokenize()
-            if (result.hasErrors) {
-                println("Lexer encountered errors:")
-                for (error in result.errors) {
-                    println("Error at line ${error.line}, " +
-                            "column ${error.column}:" +
-                            " ${error.message}" +
-                            " ${error.character?.let { " (character: '$it')" } ?: ""}")
-                }
-                return 1
+    private fun performLexing(inputStream: InputStream): Lexer.TokenizeResult? {
+        val lexer = Lexer(inputStream)
+        val result = lexer.tokenize()
+        if (result.hasErrors) {
+            println("Lexer encountered errors:")
+            for (error in result.errors) {
+                println("Error at line ${error.line}, " +
+                        "column ${error.column}:" +
+                        " ${error.message}" +
+                        " ${error.character?.let { " (character: '$it')" } ?: ""}")
             }
+            return null
+        }
+        return result
+    }
+
+    private fun performParsing(tokens: List<Token>): Parser.ParseResult? {
+        val parser = Parser(tokens)
+        val parseResult = parser.parse()
+        if (parseResult.errors.isNotEmpty()) {
+            println("Parser errors:")
+            for (error in parseResult.errors) {
+                println("${error.message} -- ${error.token?.toString()}")
+            }
+            return null
+        }
+        return parseResult
+    }
+
+    fun runLexMode(inputFilePath: String): Int {
+        println("Running in Lex mode...")
+        if (!validateFile(inputFilePath)) return 1
+
+        File(inputFilePath).inputStream().use { inputStream ->
+            val result = performLexing(inputStream) ?: return 1
             println("Tokens generated: ${result.tokens.joinToString(", ")}")
         }
         return 0
@@ -44,41 +67,20 @@ class CompilerDriver {
 
     fun runParseMode(inputFilePath: String): Int {
         println("Running in Parse mode...")
-        val file = File(inputFilePath)
-        if (!file.exists()) {
-            println("Error: Input file '$inputFilePath' does not exist.")
-            return 1
-        }
+        if (!validateFile(inputFilePath)) return 1
 
-        file.inputStream().use { inputStream ->
-            val lexer = Lexer(inputStream)
-            val lexResult = lexer.tokenize()
-            if (lexResult.hasErrors) {
-                println("Lexer encountered errors:")
-                for (error in lexResult.errors) {
-                    println("Error at line ${error.line}, " +
-                            "column ${error.column}:" +
-                            " ${error.message}" +
-                            " ${error.character?.let { " (character: '$it')" } ?: ""}")
-                }
-                return 1
-            }
-            val parser = Parser(lexResult.tokens)
-            val parseResult = parser.parse()
-            if (parseResult.errors.isNotEmpty()) {
-                println("Parser errors: ")
-                for (error in parseResult.errors) {
-                    println("${error.message} -- ${error.token?.toString()}")
-                }
-                return 1
-            }
-            val ast = parseResult.ast;
+        File(inputFilePath).inputStream().use { inputStream ->
+            val lexResult = performLexing(inputStream) ?: return 1
+            val parseResult = performParsing(lexResult.tokens) ?: return 1
+            
+            val ast = parseResult.ast
             if (ast == null) {
-                println("null program?")
+                println("Error: Parser returned null AST")
                 return 1
             }
+            
             val astPrinter = ASTPrettyPrinter()
-            ast.accept(astPrinter)
+            println(ast.accept(astPrinter))
         }
         return 0
     }
