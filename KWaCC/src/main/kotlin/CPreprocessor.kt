@@ -6,7 +6,7 @@ class CPreprocessor(
     val compiler: Compiler,
     val extraArgs: List<String> = emptyList(),
     val compilerPathOverride: String? = null,
-    ) {
+) {
 
     enum class Compiler {
         CLANG,
@@ -30,7 +30,7 @@ class CPreprocessor(
      */
     fun preprocess(inputFilePath: String, outputFilePath: String): Boolean {
         val command = mutableListOf(compilerPath, "-E", "-P", inputFilePath, "-o", outputFilePath)
-        command.addAll(extraArgs)  
+        command.addAll(extraArgs)
 
         println("Running preprocessor command: ${command.joinToString(" ")}")
 
@@ -38,11 +38,14 @@ class CPreprocessor(
             val process = ProcessBuilder(command)
                 .redirectErrorStream(true)
                 .start()
+
             val exitCode = process.waitFor()
             if (exitCode != 0) {
                 println("Preprocessing failed with exit code: $exitCode")
+                false
+            } else {
+                true
             }
-            true
         } catch (e: Exception) {
             println("Error running preprocessor: ${e.message}")
             e.printStackTrace()

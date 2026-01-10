@@ -25,38 +25,58 @@ class Lexer(inputStream: InputStream) {
 
     private var curColumn: Int = 0
     private var curLine: Int = 1
-    private var curCharCode: Int = 0
-    private var curChar: Char = 0.toChar()
+    private var curChar: Char? = null // null for EOF
 
     private fun advance() {
         if (peekBuffer.isNotEmpty()) {
             val ch = peekBuffer.removeFirst()
-            curCharCode = ch.code
             curChar = ch
         } else {
-            curCharCode = reader.read()
-            curChar = curCharCode.toChar()
+            val code = reader.read()
+            if (code == -1) {
+                curChar = null
+                return
+            }
+            curChar = code.toChar()
         }
-        
-        if (curCharCode == -1) {
-            return
-        }
+
         this.curColumn += 1
-        if (curCharCode == '\n'.code) {
+        if (curChar == '\n') {
             this.curLine += 1
             this.curColumn = 0
         }
     }
 
-    private fun peek(): Char {
+    private fun peek(): Char? {
         if (peekBuffer.isEmpty()) {
             val nextCharCode = reader.read()
             if (nextCharCode == -1) {
-                return (-1).toChar()
+                return null
             }
             peekBuffer.addLast(nextCharCode.toChar())
         }
         return peekBuffer.first()
+    }
+
+    private fun peekN(count: UInt): List<Char> {
+        val result = mutableListOf<Char>()
+
+        while (peekBuffer.size < count.toInt()) {
+            val nextCharCode = reader.read()
+            if (nextCharCode == -1) {
+                break
+            }
+            peekBuffer.addLast(nextCharCode.toChar())
+        }
+
+        for (i in 0 until count.toInt()) {
+            if (i < peekBuffer.size) {
+                result.add(peekBuffer.elementAt(i))
+            } else {
+                break
+            }
+        }
+        return result
     }
 
     private fun makeIdentOrKeyword(identOrKeyword: String): Token {
@@ -69,7 +89,7 @@ class Lexer(inputStream: InputStream) {
     }
 
     private fun lexIdentifierOrKeyword(): TokenResult {
-        check((curChar.isLetter() || curChar == '_')) {
+        check((curChar != null && curChar!!.isLetter() || curChar == '_')) {
             "lexIdentifierOrKeyword called on invalid input: '$curChar'"
         }
 
@@ -77,33 +97,31 @@ class Lexer(inputStream: InputStream) {
         do {
             builder.append(curChar)
             advance()
-        } while(curCharCode != -1 && (curChar.isLetterOrDigit() || curChar == '_'))
+        } while(curChar != null && (curChar!!.isLetterOrDigit() || curChar == '_'))
         val identOrKeyword = builder.toString()
         return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
     }
 
     private fun lexNumbers(): TokenResult {
-        check(curChar.isDigit()) { "lexNumbers() called on non-digit: '$curChar'"}
+        check(curChar != null && curChar!!.isDigit()) { "lexNumbers() called on non-digit: '$curChar'"}
         val builder = StringBuilder()
         do {
             builder.append(curChar)
             advance()
-        } while (curCharCode != -1 && curChar.isDigit())
+        } while (curChar != null && curChar!!.isDigit())
 
         // Check for invalid number format (number followed by letter)
-        val peekedChar = peek()
-        if (peekedChar.code != -1 && peekedChar.isLetter()) {
-            val invalidBuilder = StringBuilder(builder.toString())
+        if (curChar != null && (curChar!!.isLetter() || curChar == '_')) {
+            val invalidNumBuilder = StringBuilder(builder.toString())
             do {
-                invalidBuilder.append(curChar)
+                invalidNumBuilder.append(curChar)
                 advance()
-            } while (curCharCode != -1 && curChar.isLetterOrDigit())
+            } while (curChar != null && (curChar!!.isLetterOrDigit() || curChar == '_'))
 
             return TokenResult.Error(
                 LexerError(
-                    "Invalid number format: '${invalidBuilder}'",
-                    curLine,
-                    curColumn
+                    "Invalid number format: '$invalidNumBuilder'",
+                    curLine, curColumn
                 )
             )
         }
@@ -117,17 +135,17 @@ class Lexer(inputStream: InputStream) {
     }
     private fun nextToken(): TokenResult {
         try {
-            while (curCharCode != -1 && curChar.isWhitespace()) {
+            while (curChar != null && curChar!!.isWhitespace()) {
                 advance()
             }
 
-            if (curCharCode == -1) {
+            if (curChar == null) {
                 return TokenResult.Success(Token.EndOfFile)
             }
 
-            if (curChar.isLetter() || curChar == '_') {
+            if (curChar!!.isLetter() || curChar == '_') {
                 return lexIdentifierOrKeyword()
-            } else if (curChar.isDigit()) {
+            } else if (curChar!!.isDigit()) {
                 return lexNumbers()
             } else {
                 val tokenResult = when (curChar) {
@@ -179,7 +197,7 @@ class Lexer(inputStream: InputStream) {
                     // Continue tokenizing after error to collect more potential errors
                 }
             }
-        } while (curCharCode != -1)
+        } while (curChar != null)
 
         // Ensure we always have an EOF token
         if (tokens.isEmpty() || tokens.last().tokenType != Token.TokenType.EOF) {
