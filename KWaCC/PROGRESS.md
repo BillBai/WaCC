@@ -36,3 +36,40 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Review AST design
 - Discuss: Should tokens carry source positions?
 - Discuss: Next chapter from the book (unary operators? binary expressions?)
+
+---
+
+## Session 2026-01-12
+
+### Topics Covered
+- Removed `TokenType` enum redundancy from `Token.kt`
+- Simplified tokenizer loop to use single exit path
+- Refined AI collaboration guidelines for better learning
+
+### Key Learnings
+
+**Kotlin Sealed Classes vs Enums:**
+- Sealed classes provide exhaustive type checking via `is` pattern matching
+- Use sealed classes when variants carry different data (`Identifier(value)`, `Constant(value)`)
+- Use enums when variants are just labels with no per-instance data (`KeywordType.INT`, `KeywordType.VOID`)
+
+**Technical Communication:**
+- Professional pattern: Observation → Reasoning → Question
+- Keep it short and direct — real engineers don't use overly formal language
+- Example: "Why two exit conditions? Seems redundant." (not a paragraph)
+
+### Changes Made
+- Removed `TokenType` enum from `Token.kt`
+- Updated `Parser.kt` to use `is` pattern matching instead of `checkTokenType()`
+- Changed tokenizer loop to single exit path via EOF token
+- Added comments explaining loop behavior
+- Updated `AGENTS.md` with:
+  - Discovery-based learning methodology
+  - Technical English coaching guidelines
+  - Deep learning fundamentals section
+
+### Next Session Ideas
+- Review Parser implementation for improvements
+- Review AST design
+- Add source positions to tokens
+- Start next book chapter (unary operators? binary expressions?)

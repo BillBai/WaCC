@@ -41,7 +41,7 @@ class Parser(
     }
 
     private fun isAtEnd(): Boolean {
-        return currentTokenIndex >= tokens.size || peek().tokenType == Token.TokenType.EOF
+        return currentTokenIndex >= tokens.size || (peek() is Token.EndOfFile)
     }
 
     private fun addError(message: String, token: Token? = null) {
@@ -77,14 +77,14 @@ class Parser(
         }
 
         // Parse function name (identifier)
-        if (!checkTokenType(Token.TokenType.IDENTIFIER)) {
+        if (peek() !is Token.Identifier) {
             addError("Expected function name")
             return null
         }
         val nameToken = advance() as Token.Identifier
 
         // Parse '('
-        if (!checkTokenType(Token.TokenType.OPEN_PAREN)) {
+        if (peek() !is Token.OpenParen) {
             addError("Expected '(' after function name")
             return null
         }
@@ -99,7 +99,7 @@ class Parser(
         }
 
         // For now, no parameters - just parse ')'
-        if (!checkTokenType(Token.TokenType.CLOSE_PAREN)) {
+        if (peek() !is Token.CloseParen) {
             addError("Expected ')' - parameters not supported yet")
             return null
         }
@@ -115,13 +115,15 @@ class Parser(
         return FunctionDefinition(type, nameToken.value, emptyList(), body)
     }
 
-    private fun checkTokenType(tokenType: Token.TokenType): Boolean {
+    /*
+    private inline fun <reified T: Token> checkNextTokenType(): Boolean {
         if (isAtEnd()) return false
-        return peek().tokenType == tokenType
+        return peek() is T
     }
+    */
 
     private fun parseBlockStatement(): BlockStmt? {
-        if (!checkTokenType(Token.TokenType.OPEN_BRACE)) {
+        if (peek() !is Token.OpenBrace) {
             addError("Expected '{'")
             return null
         }
@@ -129,7 +131,7 @@ class Parser(
 
         val statements = mutableListOf<Statement>()
 
-        while (!checkTokenType(Token.TokenType.CLOSE_BRACE) && !isAtEnd()) {
+        while ((peek() !is Token.CloseBrace) && !isAtEnd()) {
             val stmt = parseStatement()
             if (stmt != null) {
                 statements.add(stmt)
@@ -138,7 +140,7 @@ class Parser(
             }
         }
 
-        if (!checkTokenType(Token.TokenType.CLOSE_BRACE)) {
+        if (peek() !is Token.CloseBrace) {
             addError("Expect '}'")
             return null;
         }
@@ -169,12 +171,12 @@ class Parser(
         var expression: Expression? = null
 
         // Check if there's an expression before ';'
-        if (!checkTokenType(Token.TokenType.SEMICOLON)) {
+        if (peek() !is Token.Semicolon) {
             expression = parseExpression()
         }
 
         // Parse ';'
-        if (!checkTokenType(Token.TokenType.SEMICOLON)) {
+        if (peek() !is Token.Semicolon) {
             addError("Expected ';' after return statement")
             return null
         }
@@ -185,12 +187,12 @@ class Parser(
 
     private fun parseExpression(): Expression? {
         val token = peek()
-        when (token.tokenType) {
-            Token.TokenType.CONSTANT -> {
+        when (token) {
+            is Token.Constant -> {
                 advance()
-                return IntConstant((token as Token.Constant).value)
+                return IntConstant(token.value)
             }
-            Token.TokenType.IDENTIFIER -> {
+            is Token.Identifier -> {
                 advance()
                 // Type will be determined during semantic analysis
                 return Identifier((token as Token.Identifier).value, IntType)

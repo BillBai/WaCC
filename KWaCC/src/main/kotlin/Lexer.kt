@@ -184,11 +184,14 @@ class Lexer(inputStream: InputStream) {
         val tokens = mutableListOf<Token>()
         val errors = mutableListOf<LexerError>()
 
+        // On lexing errors, the loop records the error and continues to find more tokens.
+        // At EOF, nextToken() returns Success(EndOfFile) and we break out of the loop.
+        // The code below is purely defensive.
         do {
             when (val result = nextToken()) {
                 is TokenResult.Success -> {
                     tokens.add(result.token)
-                    if (result.token.tokenType == Token.TokenType.EOF) {
+                    if (result.token is Token.EndOfFile) {
                         break
                     }
                 }
@@ -197,10 +200,10 @@ class Lexer(inputStream: InputStream) {
                     // Continue tokenizing after error to collect more potential errors
                 }
             }
-        } while (curChar != null)
+        } while (true)
 
         // Ensure we always have an EOF token
-        if (tokens.isEmpty() || tokens.last().tokenType != Token.TokenType.EOF) {
+        if (tokens.isEmpty() || (tokens.last() !is Token.EndOfFile)) {
             tokens.add(Token.EndOfFile)
         }
 
