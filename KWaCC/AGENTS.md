@@ -2,6 +2,8 @@
 
 Guidance for AI agents and collaborators working in this repository.
 
+> **Note:** See [PROGRESS.md](PROGRESS.md) for session-by-session learning journal and next steps.
+
 ## Project Overview
 
 KWaCC is a C compiler written in Kotlin. It currently implements a small front-end pipeline (preprocess -> lex -> parse) and prints an AST for debugging.
