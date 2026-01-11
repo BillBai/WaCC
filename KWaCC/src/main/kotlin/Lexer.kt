@@ -89,7 +89,7 @@ class Lexer(inputStream: InputStream) {
     }
 
     private fun lexIdentifierOrKeyword(): TokenResult {
-        check((curChar != null && curChar!!.isLetter() || curChar == '_')) {
+        check(((curChar?.isLetter() == true || curChar == '_'))) {
             "lexIdentifierOrKeyword called on invalid input: '$curChar'"
         }
 
@@ -97,31 +97,33 @@ class Lexer(inputStream: InputStream) {
         do {
             builder.append(curChar)
             advance()
-        } while(curChar != null && (curChar!!.isLetterOrDigit() || curChar == '_'))
+        } while((curChar?.isLetterOrDigit() == true) || curChar == '_')
         val identOrKeyword = builder.toString()
         return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
     }
 
     private fun lexNumbers(): TokenResult {
-        check(curChar != null && curChar!!.isDigit()) { "lexNumbers() called on non-digit: '$curChar'"}
+        check(curChar?.isDigit() == true) { "lexNumbers() called on non-digit: '$curChar'"}
+        val beginLine = curLine
+        val beginColumn = curColumn
         val builder = StringBuilder()
         do {
             builder.append(curChar)
             advance()
-        } while (curChar != null && curChar!!.isDigit())
+        } while (curChar?.isDigit() == true)
 
         // Check for invalid number format (number followed by letter)
-        if (curChar != null && (curChar!!.isLetter() || curChar == '_')) {
+        if (curChar?.isLetter() == true || curChar == '_') {
             val invalidNumBuilder = StringBuilder(builder.toString())
             do {
                 invalidNumBuilder.append(curChar)
                 advance()
-            } while (curChar != null && (curChar!!.isLetterOrDigit() || curChar == '_'))
+            } while (curChar?.isLetterOrDigit() == true || curChar == '_')
 
             return TokenResult.Error(
                 LexerError(
                     "Invalid number format: '$invalidNumBuilder'",
-                    curLine, curColumn
+                    beginLine, beginColumn
                 )
             )
         }
@@ -135,20 +137,18 @@ class Lexer(inputStream: InputStream) {
     }
     private fun nextToken(): TokenResult {
         try {
-            while (curChar != null && curChar!!.isWhitespace()) {
+            while (curChar?.isWhitespace() == true) {
                 advance()
             }
 
-            if (curChar == null) {
-                return TokenResult.Success(Token.EndOfFile)
-            }
+            val ch = curChar ?: return TokenResult.Success(Token.EndOfFile)
 
-            if (curChar!!.isLetter() || curChar == '_') {
+            if (ch.isLetter() || ch == '_') {
                 return lexIdentifierOrKeyword()
-            } else if (curChar!!.isDigit()) {
+            } else if (ch.isDigit()) {
                 return lexNumbers()
             } else {
-                val tokenResult = when (curChar) {
+                val tokenResult = when (ch) {
                     '(' ->  TokenResult.Success(Token.OpenParen)
                     ')' ->  TokenResult.Success(Token.CloseParen)
                     '{' ->  TokenResult.Success(Token.OpenBrace)
@@ -157,10 +157,10 @@ class Lexer(inputStream: InputStream) {
                     else -> {
                         TokenResult.Error(
                             LexerError(
-                                "Unexpected character '$curChar'",
+                                "Unexpected character '$ch'",
                                 curLine,
                                 curColumn,
-                                curChar
+                                ch
                             )
                         )
                     }
