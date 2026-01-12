@@ -75,5 +75,5 @@ class ASTPrettyPrinter : ASTVisitor<String> {
         "IntConstant(value=\"${node.value}\")"
 
     override fun visitIdentifier(node: Identifier): String = 
-        "Identifier(name=\"${node.name}\", type=${node.type.accept(this)})"
+        "Identifier(name=\"${node.name}\", type=${node.type?.accept(this)})"
 }

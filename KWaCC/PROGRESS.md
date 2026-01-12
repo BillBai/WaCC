@@ -73,3 +73,41 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Review AST design
 - Add source positions to tokens
 - Start next book chapter (unary operators? binary expressions?)
+
+---
+
+## Session 2026-01-13
+
+### Topics Covered
+- Reviewed AST design for type handling
+- Discussed compiler phase separation (parsing vs semantic analysis)
+- Refactored `Expression` to use mutable nullable type
+
+### Key Learnings
+
+**Compiler Design — Type Information:**
+- **Declared types** (e.g., `int x`) — parser knows these from syntax
+- **Expression types** (e.g., `x + y`) — computed during semantic analysis
+- Design choice: mutable AST with nullable `type` field, filled in during semantic analysis
+
+**AST Design Options for Deferred Type Resolution:**
+- Option A: Two separate ASTs (parsed vs typed) — maximum type safety, but code duplication
+- Option B: Nullable type (`Type?`) — Kotlin null-safety catches bugs, forces explicit handling
+- Option C: Placeholder type (`UnknownType`) — can leak through silently if not resolved
+
+**Kotlin Data Class Constructors:**
+- Primary constructor params must be `val`/`var` (defines the "data")
+- Secondary constructors must delegate to primary with `this(...)`
+- Can set inherited mutable properties after primary constructor call
+
+### Changes Made
+- Changed `Expression` to have `var type: Type?` (mutable, nullable)
+- Removed redundant `identifierType` property from `Identifier`
+- Added secondary constructor to `Identifier` for when type is known
+- Fixed comment grammar in `AST.kt`
+
+### Next Session Ideas
+- Review Parser implementation for Kotlin idioms
+- Discuss: Is Visitor pattern still needed with sealed classes?
+- Add source positions to tokens/AST nodes
+- Start next book chapter (unary operators? binary expressions?)
