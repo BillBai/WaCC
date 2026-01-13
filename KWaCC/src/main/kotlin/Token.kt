@@ -34,3 +34,14 @@ sealed class Token() {
         }
     }
 }
+
+data class TokenStream(
+    val tokens: List<Token>,
+    val positions: List<SourceLocationInfo>
+) {
+    init {
+        require(tokens.size == positions.size) {
+            "tokens and positions must have same length. token.size ${tokens.size} vs positions.size ${positions.size}"
+        }
+    }
+}

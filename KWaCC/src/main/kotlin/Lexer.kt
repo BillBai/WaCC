@@ -5,7 +5,8 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.ArrayDeque
 
-class Lexer(inputStream: InputStream) {
+class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
+    private val sourceFileInfo = sourceFileInfo
     private val reader = BufferedReader(InputStreamReader(inputStream))
     private val peekBuffer = ArrayDeque<Char>()
     data class LexerError(
@@ -16,9 +17,10 @@ class Lexer(inputStream: InputStream) {
     )
 
     data class TokenizeResult(
-        val tokens: List<Token>,
+        val tokenStream: TokenStream,
         val errors: List<LexerError>
     ) {
+        val tokens: List<Token> get() = tokenStream.tokens
         val hasErrors: Boolean get() = errors.isNotEmpty()
         val isSuccessful: Boolean get() = !hasErrors
     }
@@ -26,6 +28,10 @@ class Lexer(inputStream: InputStream) {
     private var curColumn: Int = 0
     private var curLine: Int = 1
     private var curChar: Char? = null // null for EOF
+
+    private fun makeCurrentSourceLocInfo(): SourceLocationInfo {
+        return SourceLocationInfo(sourceFileInfo, curLine, curColumn)
+    }
 
     private fun advance() {
         if (peekBuffer.isNotEmpty()) {
@@ -99,13 +105,16 @@ class Lexer(inputStream: InputStream) {
             advance()
         } while((curChar?.isLetterOrDigit() == true) || curChar == '_')
         val identOrKeyword = builder.toString()
-        return TokenResult.Success(makeIdentOrKeyword(identOrKeyword))
+        val curLoc = makeCurrentSourceLocInfo()
+        return TokenResult.Success(makeIdentOrKeyword(identOrKeyword),
+            curLoc)
     }
 
     private fun lexNumbers(): TokenResult {
         check(curChar?.isDigit() == true) { "lexNumbers() called on non-digit: '$curChar'"}
         val beginLine = curLine
         val beginColumn = curColumn
+        val curLoc = makeCurrentSourceLocInfo()
         val builder = StringBuilder()
         do {
             builder.append(curChar)
@@ -128,11 +137,11 @@ class Lexer(inputStream: InputStream) {
             )
         }
 
-        return TokenResult.Success(Token.Constant(builder.toString()))
+        return TokenResult.Success(Token.Constant(builder.toString()), curLoc)
     }
 
-    private sealed class TokenResult {
-        data class Success(val token: Token) : TokenResult()
+    private sealed class TokenResult{
+        data class Success(val token: Token, val locationInfo: SourceLocationInfo) : TokenResult()
         data class Error(val error: LexerError) : TokenResult()
     }
     private fun nextToken(): TokenResult {
@@ -141,7 +150,8 @@ class Lexer(inputStream: InputStream) {
                 advance()
             }
 
-            val ch = curChar ?: return TokenResult.Success(Token.EndOfFile)
+            val curLoc = makeCurrentSourceLocInfo()
+            val ch = curChar ?: return TokenResult.Success(Token.EndOfFile, curLoc)
 
             if (ch.isLetter() || ch == '_') {
                 return lexIdentifierOrKeyword()
@@ -149,11 +159,11 @@ class Lexer(inputStream: InputStream) {
                 return lexNumbers()
             } else {
                 val tokenResult = when (ch) {
-                    '(' ->  TokenResult.Success(Token.OpenParen)
-                    ')' ->  TokenResult.Success(Token.CloseParen)
-                    '{' ->  TokenResult.Success(Token.OpenBrace)
-                    '}' ->  TokenResult.Success(Token.CloseBrace)
-                    ';' ->  TokenResult.Success(Token.Semicolon)
+                    '(' ->  TokenResult.Success(Token.OpenParen, curLoc)
+                    ')' ->  TokenResult.Success(Token.CloseParen, curLoc)
+                    '{' ->  TokenResult.Success(Token.OpenBrace, curLoc)
+                    '}' ->  TokenResult.Success(Token.CloseBrace, curLoc)
+                    ';' ->  TokenResult.Success(Token.Semicolon, curLoc)
                     else -> {
                         TokenResult.Error(
                             LexerError(
@@ -182,6 +192,7 @@ class Lexer(inputStream: InputStream) {
     fun tokenize(): TokenizeResult {
         advance()
         val tokens = mutableListOf<Token>()
+        val positions = mutableListOf<SourceLocationInfo>()
         val errors = mutableListOf<LexerError>()
 
         // On lexing errors, the loop records the error and continues to find more tokens.
@@ -191,6 +202,7 @@ class Lexer(inputStream: InputStream) {
             when (val result = nextToken()) {
                 is TokenResult.Success -> {
                     tokens.add(result.token)
+                    positions.add(result.locationInfo)
                     if (result.token is Token.EndOfFile) {
                         break
                     }
@@ -205,8 +217,9 @@ class Lexer(inputStream: InputStream) {
         // Ensure we always have an EOF token
         if (tokens.isEmpty() || (tokens.last() !is Token.EndOfFile)) {
             tokens.add(Token.EndOfFile)
+            positions.add(makeCurrentSourceLocInfo())
         }
 
-        return TokenizeResult(tokens, errors)
+        return TokenizeResult(TokenStream(tokens, positions), errors)
     }
 }

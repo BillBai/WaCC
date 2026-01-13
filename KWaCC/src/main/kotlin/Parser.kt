@@ -1,7 +1,7 @@
 package me.billbai.compiler.kwacc
 
 class Parser(
-    private var tokens: List<Token>
+    private var tokenStream: TokenStream
 ) {
     private var currentTokenIndex: Int = 0
 
@@ -17,10 +17,10 @@ class Parser(
     )
 
     private fun peek(): Token {
-        if (currentTokenIndex < tokens.size) {
-            return tokens[currentTokenIndex]
+        return if (currentTokenIndex < tokenStream.tokens.size) {
+            tokenStream.tokens[currentTokenIndex]
         } else {
-            return Token.EndOfFile;
+            Token.EndOfFile;
         }
     }
 
@@ -33,15 +33,15 @@ class Parser(
     }
 
     private fun previous(): Token? {
-        return if (tokens.isNotEmpty() && currentTokenIndex > 0) {
-            tokens[currentTokenIndex - 1]
+        return if (tokenStream.tokens.isNotEmpty() && currentTokenIndex > 0) {
+            tokenStream.tokens[currentTokenIndex - 1]
         } else {
             null
         }
     }
 
     private fun isAtEnd(): Boolean {
-        return currentTokenIndex >= tokens.size || (peek() is Token.EndOfFile)
+        return (currentTokenIndex >= tokenStream.tokens.size) || (peek() is Token.EndOfFile)
     }
 
     private fun addError(message: String, token: Token? = null) {
@@ -50,22 +50,22 @@ class Parser(
 
     private fun parseType(): Type? {
         val token = peek()
-        if (token is Token.Keyword) {
-            when (token.keywordType) {
-                Token.KeywordType.INT -> {
-                    advance()
-                    return IntType
-                }
-                Token.KeywordType.VOID -> {
-                    advance()
-                    return VoidType
-                }
-                else -> {
-                    return null
-                }
+        if (token !is Token.Keyword) {
+            return null
+        }
+        return when (token.keywordType) {
+            Token.KeywordType.INT -> {
+                advance()
+                IntType
+            }
+            Token.KeywordType.VOID -> {
+                advance()
+                VoidType
+            }
+            else -> {
+                null
             }
         }
-        return null
     }
 
     private fun parseFunctionDefinition(): FunctionDefinition? {
@@ -195,7 +195,7 @@ class Parser(
             is Token.Identifier -> {
                 advance()
                 // Type will be determined during semantic analysis
-                return Identifier((token as Token.Identifier).value, IntType)
+                return Identifier(token.value, IntType)
             }
             else -> {
                 addError("Expected expression")

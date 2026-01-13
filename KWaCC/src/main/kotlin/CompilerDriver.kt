@@ -26,7 +26,10 @@ class CompilerDriver {
     }
 
     private fun performLexing(inputStream: InputStream): Lexer.TokenizeResult? {
-        val lexer = Lexer(inputStream)
+        // TODO: fill in real file path
+        val fileInfo = SourceFileInfo("", "")
+
+        val lexer = Lexer(fileInfo, inputStream)
         val result = lexer.tokenize()
         if (result.hasErrors) {
             println("Lexer encountered errors:")
@@ -41,8 +44,8 @@ class CompilerDriver {
         return result
     }
 
-    private fun performParsing(tokens: List<Token>): Parser.ParseResult? {
-        val parser = Parser(tokens)
+    private fun performParsing(tokenStream: TokenStream): Parser.ParseResult? {
+        val parser = Parser(tokenStream)
         val parseResult = parser.parse()
         if (parseResult.errors.isNotEmpty()) {
             println("Parser errors:")
@@ -60,7 +63,7 @@ class CompilerDriver {
 
         File(inputFilePath).inputStream().use { inputStream ->
             val result = performLexing(inputStream) ?: return 1
-            println("Tokens generated: ${result.tokens.joinToString(", ")}")
+            println("Tokens generated: ${result.tokenStream.tokens.joinToString(", ")}")
         }
         return 0
     }
@@ -71,7 +74,7 @@ class CompilerDriver {
 
         File(inputFilePath).inputStream().use { inputStream ->
             val lexResult = performLexing(inputStream) ?: return 1
-            val parseResult = performParsing(lexResult.tokens) ?: return 1
+            val parseResult = performParsing(lexResult.tokenStream) ?: return 1
             
             val ast = parseResult.ast
             if (ast == null) {

@@ -111,3 +111,43 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Discuss: Is Visitor pattern still needed with sealed classes?
 - Add source positions to tokens/AST nodes
 - Start next book chapter (unary operators? binary expressions?)
+
+---
+
+## Session 2026-01-14
+
+### Topics Covered
+- Reviewed Parser for Kotlin idioms
+- Implemented source position tracking with parallel arrays (SoA pattern)
+
+### Key Learnings
+
+**Kotlin Smart Casting:**
+- Smart casts only work on the **same variable** — doesn't flow across function calls
+- `peek()` then `advance()` are separate calls, so cast is still needed on `advance()` result
+- Storing in a variable first (`val token = peek()`) enables smart casting in `when` branches
+
+**Data-Oriented Design — SoA vs AoS:**
+- **AoS (Array of Structs):** `[{token, pos}, {token, pos}, ...]` — data grouped by item
+- **SoA (Struct of Arrays):** `{tokens: [...], positions: [...]}` — data grouped by field
+- SoA allows `object` singleton tokens (like `OpenParen`) while still having per-instance positions
+- Trade-off: must keep arrays synchronized
+
+**Kotlin Invariant Enforcement:**
+- `require()` in `init` block — validates input/arguments (throws `IllegalArgumentException`)
+- `check()` — validates internal state (throws `IllegalStateException`)
+- Used `require(tokens.size == positions.size)` to enforce parallel array invariant
+
+### Changes Made
+- Simplified `parseType()` with early return + `when` as expression
+- Fixed redundant cast in `parseExpression()` (smart cast already applied)
+- Created `SourceFileInfo` and `SourceLocationInfo` data classes
+- Created `TokenStream` with parallel arrays + `require()` invariant
+- Updated Lexer to track and return positions alongside tokens
+- Updated Parser to accept `TokenStream`
+- Fixed all tests for new API
+
+### Next Session Ideas
+- Use positions in error messages (update `ParseError` and `addError()`)
+- Start next book chapter (unary operators? binary expressions?)
+- Discuss: Visitor pattern vs sealed class `when`

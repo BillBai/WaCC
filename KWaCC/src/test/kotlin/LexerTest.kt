@@ -2,6 +2,7 @@ package me.billbai.compiler.kwacc
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Nested
+import javax.xml.transform.Source
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -9,7 +10,8 @@ import kotlin.test.assertTrue
 class LexerTest {
 
     private fun tokenize(input: String): Lexer.TokenizeResult {
-        return Lexer(input.byteInputStream()).tokenize()
+        val sourceFileInfo = SourceFileInfo("<inline-test-case>", "")
+        return Lexer(sourceFileInfo, input.byteInputStream()).tokenize()
     }
 
     @Nested
@@ -18,24 +20,27 @@ class LexerTest {
         fun `valid numbers separated by whitespace`() {
             val result = tokenize("123 456")
             assertTrue(result.isSuccessful)
-            assertEquals(3, result.tokens.size)
-            assertEquals(Token.Constant("123"), result.tokens[0])
-            assertEquals(Token.Constant("456"), result.tokens[1])
-            assertEquals(Token.EndOfFile, result.tokens[2])
+            val tokens = result.tokenStream.tokens
+            assertEquals(3, tokens.size)
+            assertEquals(Token.Constant("123"), tokens[0])
+            assertEquals(Token.Constant("456"), tokens[1])
+            assertEquals(Token.EndOfFile, tokens[2])
         }
 
         @Test
         fun `number followed by semicolon is valid`() {
             val result = tokenize("123;")
+            val tokens = result.tokenStream.tokens
             assertTrue(result.isSuccessful)
-            assertEquals(3, result.tokens.size)
-            assertEquals(Token.Constant("123"), result.tokens[0])
-            assertEquals(Token.Semicolon, result.tokens[1])
+            assertEquals(3, tokens.size)
+            assertEquals(Token.Constant("123"), tokens[0])
+            assertEquals(Token.Semicolon, tokens[1])
         }
 
         @Test
         fun `number followed by parenthesis is valid`() {
             val result = tokenize("123)")
+            val tokens = result.tokenStream.tokens
             assertTrue(result.isSuccessful)
             assertEquals(Token.Constant("123"), result.tokens[0])
             assertEquals(Token.CloseParen, result.tokens[1])

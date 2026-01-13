@@ -7,12 +7,13 @@ import kotlin.test.assertTrue
 class ParserTest {
     @Test
     fun `test parse basic program`() {
+        val sourceFileInfo = SourceFileInfo("", "")
         val input = "int main() { return 42; }"
-        val lexer = Lexer(input.byteInputStream())
+        val lexer = Lexer(sourceFileInfo, input.byteInputStream())
         val tokenizeResult = lexer.tokenize()
         assertTrue(tokenizeResult.tokens.isNotEmpty())
 
-        val parser = Parser(tokenizeResult.tokens)
+        val parser = Parser(tokenizeResult.tokenStream)
         val parseResult = parser.parse()
         assertTrue(parseResult.errors.isEmpty())
         val ast = parseResult.ast
