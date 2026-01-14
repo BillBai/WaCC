@@ -5,14 +5,13 @@
   },
   "enabledPlugins": {
     "kotlin-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
+    "feature-dev@claude-plugins-official": false,
+    "code-review@claude-plugins-official": false,
+    "commit-commands@claude-plugins-official": false,
     "greptile@claude-plugins-official": false,
     "learning-output-style@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
-
     "obsidian@obsidian-skills": false,
     "frontend-design@claude-plugins-official": false,
     "github@claude-plugins-official": false,
@@ -24,7 +23,6 @@
     "ralph-loop@claude-plugins-official": false,
     "code-simplifier@claude-plugins-official": false,
     "huggingface-skills@claude-plugins-official": false,
-
     "pyright-lsp@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false,
     "gopls-lsp@claude-plugins-official": false,

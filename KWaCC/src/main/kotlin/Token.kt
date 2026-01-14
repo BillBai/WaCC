@@ -1,6 +1,6 @@
 package me.billbai.compiler.kwacc
 
-sealed class Token() {
+sealed class Token {
 
     enum class KeywordType {
         INT,
@@ -25,12 +25,12 @@ sealed class Token() {
             is Identifier -> "Identifier($value)"
             is Constant -> "Constant($value)"
             is Keyword -> "Keyword(${keywordType.name})"
-            OpenParen -> "OpenParen"
-            CloseParen -> "CloseParen"
-            OpenBrace -> "OpenBrace"
-            CloseBrace -> "CloseBrace"
-            Semicolon -> "Semicolon"
-            EndOfFile -> "EndOfFile"
+            is OpenParen -> "OpenParen"
+            is CloseParen -> "CloseParen"
+            is OpenBrace -> "OpenBrace"
+            is CloseBrace -> "CloseBrace"
+            is Semicolon -> "Semicolon"
+            is EndOfFile -> "EndOfFile"
         }
     }
 }

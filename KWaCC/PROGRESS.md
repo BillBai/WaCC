@@ -151,3 +151,41 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Use positions in error messages (update `ParseError` and `addError()`)
 - Start next book chapter (unary operators? binary expressions?)
 - Discuss: Visitor pattern vs sealed class `when`
+
+---
+
+## Session 2026-01-15
+
+### Topics Covered
+- Deep dive into Kotlin `sealed class` — when/why to use, exhaustive `when`, `is` vs identity
+- Reviewed `Token.kt` and `AST.kt` for issues and Kotlin idioms
+- Created `Asm.kt` — Assembly AST for code generation stage
+
+### Key Learnings
+
+**Kotlin Sealed Classes:**
+- `sealed` = "finite set of variants, all defined in same file"
+- Compiler guarantees exhaustive `when` — no `else` branch needed
+- Leaf nodes don't need `sealed` — only categories with variants do
+- `is` checks **type**; without `is` checks **identity** (only works for `object` singletons)
+
+**`this` vs `super`:**
+- `this.property` — refers to this object's property (including inherited)
+- `super.property` — explicitly refers to parent's property (use when disambiguating overrides)
+- Default to `this` unless there's a reason to use `super`
+
+**Assembly AST Design:**
+- Separate AST for assembly allows modification after generation (optimization, register allocation)
+- `Instruction` and `Operand` are `sealed` (have variants)
+- `RetInst` and `RegisterOperand` are `object` singletons (no per-instance data for now)
+
+### Changes Made
+- Removed unnecessary `()` from `sealed class Token`
+- Added `is` before `object` cases in `Token.toString()` for consistency
+- Removed unnecessary semicolon in `AST.kt`
+- Created `Asm.kt` with: `Program`, `FunctionDef`, `Instruction` (Mov, Ret), `Operand` (Imm, Register)
+
+### Next Session Ideas
+- Assembly Generation: C AST → Asm AST
+- Code Emission: Asm AST → `.s` file
+- Wire up source positions to error messages

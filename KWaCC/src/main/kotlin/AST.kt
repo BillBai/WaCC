@@ -75,7 +75,7 @@ data class Identifier(
     val name: String,
 ) : Expression(null) {
     constructor(name: String, type: Type?) : this(name) {
-        this.type = type;
+        this.type = type
     }
 
     override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIdentifier(this)
