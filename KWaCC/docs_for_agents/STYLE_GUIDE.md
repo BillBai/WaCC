@@ -13,10 +13,11 @@ Coding conventions and contributor guidelines.
 
 - Keep changes scoped to a single stage when possible (lexer vs parser vs AST)
 - When extending the grammar, update `Token`, `Lexer`, `Parser`, and `AST` together
-- Add or extend tests under `src/test/kotlin/` when behavior changes
+- When adding new assembly instructions/operands, update `Asm.kt`
+- Add or extend tests when behavior changes
 
 ## Testing
 
 - Test framework: JUnit 5 with Kotlin test extensions
-- Test files live in `src/test/kotlin/`
+- Test files live in `src/test/kotlin/me/billbai/compiler/kwacc/`
 - Run tests: `./gradlew test`

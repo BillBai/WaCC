@@ -184,6 +184,10 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Added `is` before `object` cases in `Token.toString()` for consistency
 - Removed unnecessary semicolon in `AST.kt`
 - Created `Asm.kt` with: `Program`, `FunctionDef`, `Instruction` (Mov, Ret), `Operand` (Imm, Register)
+- Restructured source tree to match package declarations:
+  - `src/main/kotlin/me/billbai/compiler/kwacc/` for main sources
+  - `src/main/kotlin/me/billbai/compiler/kwacc/asm/` for assembly AST
+  - `src/test/kotlin/me/billbai/compiler/kwacc/` for tests
 
 ### Next Session Ideas
 - Assembly Generation: C AST → Asm AST
