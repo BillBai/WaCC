@@ -4,7 +4,7 @@ sealed class AsmNode {
 }
 
 data class Program(
-    val functionDef: FunctionDef
+    val functionDef: FunctionDef?
 ) : AsmNode() {
 
 }
