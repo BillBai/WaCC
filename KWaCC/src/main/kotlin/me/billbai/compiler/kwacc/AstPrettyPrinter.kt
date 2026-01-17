@@ -1,6 +1,6 @@
 package me.billbai.compiler.kwacc
 
-class ASTPrettyPrinter : ASTVisitor<String> {
+class AstPrettyPrinter : AstVisitor<String> {
     private var indentLevel: Int = 0
 
     private fun getIndent(): String {

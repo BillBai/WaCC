@@ -82,7 +82,7 @@ class CompilerDriver {
                 return 1
             }
             
-            val astPrinter = ASTPrettyPrinter()
+            val astPrinter = AstPrettyPrinter()
             println(ast.accept(astPrinter))
         }
         return 0

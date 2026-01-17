@@ -1,6 +1,6 @@
 package me.billbai.compiler.kwacc
 
-interface ASTVisitor<T> {
+interface AstVisitor<T> {
     fun visitProgram(node: Program): T
     fun visitFunctionDefinition(node: FunctionDefinition): T
     fun visitIntType(node: IntType): T

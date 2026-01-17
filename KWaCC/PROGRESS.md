@@ -193,3 +193,13 @@ A journal tracking learning progress through the "Write a C Compiler" book while
 - Assembly Generation: C AST → Asm AST
 - Code Emission: Asm AST → `.s` file
 - Wire up source positions to error messages
+
+---
+
+## 2026-01-16
+
+DQQ and I broke up.
+
+I am in such sorrow.
+
+Remember, let go, move on.

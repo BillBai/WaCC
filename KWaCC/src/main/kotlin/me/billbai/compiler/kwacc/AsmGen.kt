@@ -1,16 +1,6 @@
 package me.billbai.compiler.kwacc
 
-import me.billbai.compiler.kwacc.asm.AsmNode
-import me.billbai.compiler.kwacc.asm.Program as AsmProgram
-import me.billbai.compiler.kwacc.asm.FunctionDef as AsmFunctionDef
-import me.billbai.compiler.kwacc.asm.Instruction as AsmInst
-import me.billbai.compiler.kwacc.asm.MovInst as AsmMoveInst
-import me.billbai.compiler.kwacc.asm.RetInst as AsmRetInst
-import me.billbai.compiler.kwacc.asm.ImmOperand as AsmImmOperand
-import me.billbai.compiler.kwacc.asm.RegisterOperand as AsmRegisterOperand
-import me.billbai.compiler.kwacc.asm.Operand as AsmOperand
-
-class AsmGenerator: ASTVisitor<AsmNode> {
+class AsmGenerator : AstVisitor<AsmNode> {
     override fun visitProgram(node: Program): AsmNode {
         if (node.items.isEmpty()) {
             return AsmProgram(null)
@@ -28,7 +18,13 @@ class AsmGenerator: ASTVisitor<AsmNode> {
     }
 
     override fun visitFunctionDefinition(node: FunctionDefinition): AsmNode {
-        TODO("Not yet implemented")
+        val result = node.body.accept(this)
+        if (result !is AsmInstList) {
+            // TODO(billbai): Not supported yet.
+            return AsmFunctionDef(node.name, AsmInstList(emptyList()))
+        }
+
+        return AsmFunctionDef(node.name, result)
     }
 
     override fun visitIntType(node: IntType): AsmNode {
@@ -44,15 +40,38 @@ class AsmGenerator: ASTVisitor<AsmNode> {
     }
 
     override fun visitBlockStmt(node: BlockStmt): AsmNode {
-        TODO("Not yet implemented")
+        val instList = mutableListOf<AsmInstruction>()
+        for (statement in node.statements) {
+            when (val result = statement.accept(this)) {
+                is AsmInstList -> instList.addAll(result.instList)
+                is AsmInstruction -> instList.add(result)
+                else -> {
+                    // TODO(billbai): Not implemented yet.
+                }
+            }
+        }
+        return AsmInstList(instList)
     }
 
     override fun visitReturnStmt(node: ReturnStmt): AsmNode {
-        TODO("Not yet implemented")
+        val instList = mutableListOf<AsmInstruction>()
+        var retOperand: AsmOperand? = null
+        if (node.expression != null) {
+            val result = node.expression.accept(this)
+            if (result is AsmOperand) {
+                val dstOperand = AsmRegisterOperand
+                val movInst = AsmMovInst(src = result, dst = dstOperand)
+                retOperand = dstOperand
+                instList.add(movInst)
+            }
+        }
+        instList.add(AsmRetInst(retOperand))
+        return AsmInstList(instList);
     }
 
     override fun visitIntConstant(node: IntConstant): AsmNode {
-        TODO("Not yet implemented")
+        // TODO(billbai) check value is a valid integer.
+        return AsmImmOperand(node.value.toInt())
     }
 
     override fun visitIdentifier(node: Identifier): AsmNode {

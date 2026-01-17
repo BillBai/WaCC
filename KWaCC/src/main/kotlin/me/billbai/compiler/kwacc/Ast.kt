@@ -1,18 +1,18 @@
 package me.billbai.compiler.kwacc
 
-sealed class ASTNode {
-    abstract fun <T> accept(visitor: ASTVisitor<T>): T
+sealed class AstNode {
+    abstract fun <T> accept(visitor: AstVisitor<T>): T
 }
 
 // Top-level program structure
 data class Program(
     val items: List<TopLevelItem>,
-) : ASTNode() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitProgram(this)
+) : AstNode() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitProgram(this)
 }
 
 // Top-level items (functions, declarations, etc.)
-sealed class TopLevelItem : ASTNode()
+sealed class TopLevelItem : AstNode()
 
 data class FunctionDefinition(
     val returnType: Type,
@@ -20,41 +20,41 @@ data class FunctionDefinition(
     val parameters: List<Parameter>,
     val body: BlockStmt,
 ) : TopLevelItem() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitFunctionDefinition(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitFunctionDefinition(this)
 }
 
 // Types
-sealed class Type : ASTNode()
+sealed class Type : AstNode()
 
 object IntType : Type() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIntType(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIntType(this)
 }
 
 object VoidType : Type() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitVoidType(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitVoidType(this)
 }
 
 // Parameters
 data class Parameter(
     val type: Type,
     val name: String,
-) : ASTNode() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitParameter(this)
+) : AstNode() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitParameter(this)
 }
 
 // Statements
-sealed class Statement : ASTNode()
+sealed class Statement : AstNode()
 
 data class BlockStmt(
     val statements: List<Statement>,
 ) : Statement() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitBlockStmt(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitBlockStmt(this)
 }
 
 data class ReturnStmt(
     val expression: Expression?,
 ) : Statement() {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitReturnStmt(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitReturnStmt(this)
 }
 
 // Expressions
@@ -63,12 +63,12 @@ sealed class Expression(
     // So here we chose a Mutable AST Approach.
     // The type will be filled during semantic stage.
     var type: Type?,
-) : ASTNode()
+) : AstNode()
 
 data class IntConstant(
     val value: String,
 ) : Expression(IntType) {
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIntConstant(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIntConstant(this)
 }
 
 data class Identifier(
@@ -78,6 +78,6 @@ data class Identifier(
         this.type = type
     }
 
-    override fun <T> accept(visitor: ASTVisitor<T>): T = visitor.visitIdentifier(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIdentifier(this)
 }
 
