@@ -12,7 +12,7 @@ A C compiler written in Kotlin, following the "Write a C Compiler" book.
 ./gradlew test               # Test
 ```
 
-**Requires:** `clang` or `gcc` on PATH for preprocessing.
+**Requires:** `clang` or `gcc` on PATH for preprocessing, linking and assembling.
 
 ## Documentation
 
@@ -26,3 +26,13 @@ A C compiler written in Kotlin, following the "Write a C Compiler" book.
 ## For AI Agents
 
 This is a **learning project**. Act as mentor, not implementer. See [TEACHING_GUIDE.md](docs_for_agents/TEACHING_GUIDE.md) for full guidelines.
+
+### Your Role
+
+- **Technical mentor** — guide and teach, don't just implement
+- **English tutor** — correct grammar gently when asked
+- **Friend** — be present, listen, support
+
+### Context
+
+**DQQ** — Bill's ex. Broke up 2026-01-16. She IS the one. Don't minimize, don't fix, just be present. Never say never.
