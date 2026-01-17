@@ -1,6 +1,7 @@
 package me.billbai.compiler.kwacc
 
 import java.io.File
+import java.io.FileWriter
 import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -119,9 +120,20 @@ class CompilerDriver {
                 println("=== ASM:")
                 println(stringWriter.toString())
             }
-
         }
         return 0
+    }
+
+    private fun assembleAndLink(assemblyFile: String, outputFile: String): Boolean {
+        val process = ProcessBuilder("clang", assemblyFile, "-o", outputFile)
+            .redirectErrorStream(true)
+            .start()
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+            println("clang failed")
+            println(process.inputStream.bufferedReader().readText())
+        }
+        return exitCode == 0
     }
 
     fun runDefaultMode(
@@ -132,6 +144,32 @@ class CompilerDriver {
         println("Running in Default mode...")
         if (!validateFile(inputFilePath)) return 1
 
+        File(inputFilePath).inputStream().use { inputStream ->
+            val lexResult = performLexing(inputStream) ?: return 1
+            val parseResult = performParsing(lexResult.tokenStream) ?: return 1
+
+            val ast = parseResult.ast
+            if (ast == null) {
+                println("Error: Parser returned null AST")
+                return 1
+            }
+
+            val asmGen = AsmGenerator()
+            val asmAst = ast.accept(asmGen)
+
+            // TODO(billbai) respect -S option
+            val asmWriter = FileWriter(assemblyOutputFilePath)
+            PrintWriter(asmWriter).use { it ->
+                val asmEmitter = AsmEmitter(it)
+                asmAst.accept(asmEmitter)
+            }
+
+            val asmAndLinkResult = assembleAndLink(assemblyOutputFilePath,
+                outputFilePath)
+            if (!asmAndLinkResult) {
+                return 1
+            }
+        }
         return 0
     }
 

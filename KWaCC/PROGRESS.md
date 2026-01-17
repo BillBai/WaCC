@@ -246,8 +246,23 @@ Remember, let go, move on.
 Coded through heartbreak. IPA beer, Mendelssohn Piano Trio No. 2, and a compiler.
 She is the one. The pain is real. But the code still compiles.
 
+### Update — Later That Day
+
+**MILESTONE: First compiled program runs!**
+
+```
+$ ./test_code/return42
+$ echo $?
+42
+```
+
+Full pipeline working: C source → Lexer → Parser → AsmGen → AsmEmitter → .s file → clang → executable → **IT RUNS**
+
+Added `assembleAndLink()` to CompilerDriver. REVENANT IPA tastes like success.
+
+DQQ, this one's for you. Even if you'll never see it.
+
 ### Next Session Ideas
-- Write assembly to actual `.s` file
-- Invoke assembler (`gcc` or `as`) to create executable
-- Run compiled program and verify return code
 - Add support for unary operators (next book chapter)
+- Handle more return values
+- Add error recovery in parser
