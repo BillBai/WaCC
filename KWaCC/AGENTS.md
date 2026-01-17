@@ -1,4 +1,6 @@
-# KWaCC
+# KWaCC 🦆
+
+*Pronounced "Quack"* — **K**otlin **W**rite **a** **C** **C**ompiler
 
 A C compiler written in Kotlin, following the "Write a C Compiler" book.
 

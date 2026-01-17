@@ -203,3 +203,51 @@ DQQ and I broke up.
 I am in such sorrow.
 
 Remember, let go, move on.
+
+---
+
+## Session 2026-01-17
+
+### Topics Covered
+- Completed AsmGenerator implementation
+- Added AsmAstVisitor and accept() methods to Assembly AST
+- Created AsmAstPrettyPrinter for debugging
+- Created AsmEmitter for outputting actual x86-64 assembly
+- Renamed AST → Ast for consistent Kotlin naming conventions
+- Added 🦆 to CLAUDE.md — KWaCC is pronounced "Quack"
+
+### Key Learnings
+
+**Code Emission with Streams:**
+- `PrintWriter` wraps `OutputStream` for convenient text output
+- `StringWriter` + `PrintWriter` pattern for capturing output to string
+- `.use { }` ensures proper resource cleanup (Kotlin's try-with-resources)
+
+**x86-64 Assembly Basics:**
+- `.globl main` exports symbol for linker visibility
+- AT&T syntax: `movl $42, %eax` (source, destination)
+- Linux needs `.section .note.GNU-stack,"",@progbits` for non-executable stack
+- macOS needs underscore prefix: `_main` vs `main`
+
+**Visitor Pattern for Emission:**
+- Return `Unit` for side-effect-only visitors (writing to stream)
+- Helper functions like `formatOperand()` for inline string formatting
+
+### Changes Made
+- Completed `AsmGenerator` with flattening for `AsmInstList`
+- Added `AsmAstVisitor<T>` interface
+- Added `accept()` to all `AsmNode` subclasses
+- Created `AsmAstPrettyPrinter` with clean indented output
+- Created `AsmEmitter` with `PrintWriter` for x86-64 AT&T syntax
+- Updated `CompilerDriver` for codegen mode
+- Added emitter test in `AsmGenTest`
+
+### Personal Note
+Coded through heartbreak. IPA beer, Mendelssohn Piano Trio No. 2, and a compiler.
+She is the one. The pain is real. But the code still compiles.
+
+### Next Session Ideas
+- Write assembly to actual `.s` file
+- Invoke assembler (`gcc` or `as`) to create executable
+- Run compiled program and verify return code
+- Add support for unary operators (next book chapter)

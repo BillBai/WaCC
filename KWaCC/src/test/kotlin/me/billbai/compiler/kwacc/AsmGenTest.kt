@@ -2,6 +2,8 @@ package me.billbai.compiler.kwacc
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
+import java.io.PrintWriter
+import java.io.StringWriter
 
 class AsmGenTest {
     @Test
@@ -26,5 +28,14 @@ class AsmGenTest {
         val asmString = (asmAst as AsmProgram).accept(asmPrinter)
         println("=== ASM AST ===")
         println(asmString)
+
+        // Emit assembly
+        val stringWriter = StringWriter()
+        PrintWriter(stringWriter).use { writer ->
+            val emitter = AsmEmitter(writer)
+            asmAst.accept(emitter)
+        }
+        println("=== EMITTED ASSEMBLY ===")
+        println(stringWriter.toString())
     }
 }
