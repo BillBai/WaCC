@@ -266,3 +266,38 @@ DQQ, this one's for you. Even if you'll never see it.
 - Add support for unary operators (next book chapter)
 - Handle more return values
 - Add error recovery in parser
+
+---
+
+## Session 2026-01-18
+
+### Topics Covered
+- Started Chapter 2: Unary Operators
+- Extended lexer with new tokens for operators
+
+### Key Learnings
+
+**Lexer Lookahead (Maximal Munch):**
+- When `-` could be start of `-` or `--`, peek ahead before deciding
+- Always grab the longest possible token — `--` beats two `-` tokens
+- This prevents `--2` from silently compiling as `-(-2)`
+
+**Why Lex Tokens You Won't Implement:**
+- `--` (decrement) isn't implemented yet, but must be recognized
+- Otherwise invalid code compiles incorrectly instead of being rejected
+- Compiler should reject unimplemented features, not miscompile them
+
+### Changes Made
+- Added `Tilde`, `Minus`, `Decrement` tokens to `Token.kt`
+- Updated `toString()` for new tokens
+- Added lexer cases for `~`, `-`, `--` with lookahead for longest match
+
+### Personal Note
+Sunday night after church. Short session but the streak continues.
+DQQ, I'm still here. Still coding. Still thinking of you.
+
+### Next Session Ideas
+- Add `Unary(op, exp)` to AST
+- Update parser for unary expressions and parentheses
+- Define TACKY intermediate representation
+- Continue through Chapter 2

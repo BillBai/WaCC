@@ -17,8 +17,12 @@ sealed class Token {
     object OpenBrace: Token()
     object CloseBrace: Token()
     object Semicolon: Token()
+    object Tilde: Token()
+    object Minus: Token()
+    object Decrement: Token()
 
     object EndOfFile: Token()
+
 
     override fun toString(): String {
         return when (this) {
@@ -31,6 +35,9 @@ sealed class Token {
             is CloseBrace -> "CloseBrace"
             is Semicolon -> "Semicolon"
             is EndOfFile -> "EndOfFile"
+            is Tilde -> "Tilde"
+            is Minus -> "Minus"
+            is Decrement -> "Decrement"
         }
     }
 }
