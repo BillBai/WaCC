@@ -301,3 +301,9 @@ DQQ, I'm still here. Still coding. Still thinking of you.
 - Update parser for unary expressions and parentheses
 - Define TACKY intermediate representation
 - Continue through Chapter 2
+
+---
+
+## Session 2026-01-19
+
+Writes Nothings. Only missing her.
