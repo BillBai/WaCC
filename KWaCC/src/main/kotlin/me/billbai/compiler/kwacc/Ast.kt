@@ -81,3 +81,27 @@ data class Identifier(
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIdentifier(this)
 }
 
+data class UnaryExpression(
+    val unaryOperator: UnaryOperator,
+    val expression: Expression,
+) : Expression(null) {
+    constructor(
+        unaryOperator: UnaryOperator,
+        expression: Expression,
+        type: Type?
+    ): this(unaryOperator, expression) {
+        this.type = type
+    }
+
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitUnary(this)
+}
+
+sealed class UnaryOperator() : AstNode() {}
+
+object ComplementOperator : UnaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitComplementOperator(this)
+}
+
+object NegateOperator : UnaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitNegateOperator(this)
+}

@@ -77,4 +77,16 @@ class AsmGenerator : AstVisitor<AsmNode> {
     override fun visitIdentifier(node: Identifier): AsmNode {
         TODO("Not yet implemented")
     }
+
+    override fun visitComplementOperator(node: ComplementOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitNegateOperator(node: NegateOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitUnary(node: UnaryExpression): AsmNode {
+        TODO("Not yet implemented")
+    }
 }

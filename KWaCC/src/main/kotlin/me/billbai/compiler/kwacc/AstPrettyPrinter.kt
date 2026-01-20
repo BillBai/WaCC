@@ -76,4 +76,13 @@ class AstPrettyPrinter : AstVisitor<String> {
 
     override fun visitIdentifier(node: Identifier): String = 
         "Identifier(name=\"${node.name}\", type=${node.type?.accept(this)})"
+
+    override fun visitComplementOperator(node: ComplementOperator): String =
+        "ComplementOp(~)"
+
+    override fun visitNegateOperator(node: NegateOperator): String = "NegateOp(-)"
+
+    override fun visitUnary(node: UnaryExpression): String {
+        return "UnaryOperator(op=${node.unaryOperator.accept(this)}, expression=${node.expression.accept(this)})"
+    }
 }
