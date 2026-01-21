@@ -185,23 +185,64 @@ class Parser(
         return ReturnStmt(expression)
     }
 
+    private fun parseUnaryOperator(): UnaryOperator? {
+        val token = peek()
+        if (token == Token.Minus) {
+            advance()
+            return NegateOperator
+        }
+        if (token == Token.Tilde) {
+            advance()
+            return ComplementOperator
+        }
+        addError("Expecting - or ~ unary operator")
+        return null
+    }
+
     private fun parseExpression(): Expression? {
         val token = peek()
-        when (token) {
-            is Token.Constant -> {
-                advance()
-                return IntConstant(token.value)
+        if (token is Token.Constant) {
+            advance()
+            return IntConstant(token.value)
+        }
+        if (token is Token.Identifier) {
+            advance()
+            // Type will be determined during semantic analysis
+            return Identifier(token.value, IntType)
+        }
+        if (token is Token.Minus || token is Token.Tilde) {
+            val operator = parseUnaryOperator()
+            if (operator == null) {
+                addError("Expecting unary operator")
+                return null
             }
-            is Token.Identifier -> {
-                advance()
-                // Type will be determined during semantic analysis
-                return Identifier(token.value, IntType)
+            val exp = parseExpression()
+            if (exp == null) {
+                addError("Expecting exp adter unary operator")
+                return null
             }
-            else -> {
-                addError("Expected expression")
+            return UnaryExpression(operator, exp)
+        }
+        if (token is Token.OpenParen) {
+            advance()
+            val exp = parseExpression()
+            if (exp != null) {
+                val nextToken = peek()
+                if (nextToken == Token.CloseParen) {
+                    advance()
+                    return exp
+                } else {
+                    addError("Expected ')'")
+                    return null
+                }
+            } else {
+                addError("Expected expression after '('")
                 return null
             }
         }
+
+        addError("Expected expression")
+        return null
     }
 
     private fun parseProgram(): Program? {

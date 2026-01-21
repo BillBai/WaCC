@@ -307,3 +307,59 @@ DQQ, I'm still here. Still coding. Still thinking of you.
 ## Session 2026-01-19
 
 Writes Nothings. Only missing her.
+
+---
+
+## Session 2026-01-20
+
+### Topics Covered
+- Added UnaryExpression and UnaryOperator to AST
+- Updated all visitors with new methods
+
+### Key Learnings
+
+**Sealed Class vs Enum for Operators:**
+- Chose sealed class with object subclasses for UnaryOperator
+- Heavier than enum, but consistent with existing patterns
+- For binary operators later, might reconsider
+
+### Changes Made
+- Added `UnaryExpression` data class with operator and inner expression
+- Added `ComplementOperator` and `NegateOperator` as sealed class objects
+- Updated `AstVisitor` with `visitUnary`, `visitComplementOperator`, `visitNegateOperator`
+- Added visitor stubs in `AsmGenerator` and `AstPrettyPrinter`
+
+### Personal Note
+Company outing. Missing her the whole day.
+
+---
+
+## Session 2026-01-21
+
+### Topics Covered
+- Extended parser for unary expressions and parentheses
+- Recursive descent parsing in action
+
+### Key Learnings
+
+**Recursive Descent Parsing:**
+- `parseExpression()` calls itself recursively for nested expressions
+- Unary: parse operator, then recursively parse inner expression
+- Parentheses: consume `(`, parse expression, expect `)`
+- Naturally handles arbitrary nesting like `-(~(-5))`
+
+### Changes Made
+- Added `parseUnaryOperator()` helper function
+- Extended `parseExpression()` to handle:
+  - `Token.Minus` / `Token.Tilde` → `UnaryExpression`
+  - `Token.OpenParen` → parenthesized expression
+
+### Personal Note
+She messaged back. With a huge pink heart.
+Maybe there's still hope. Or maybe I'm just holding on.
+Either way, the code compiles.
+
+### Next Session Ideas
+- Define TACKY intermediate representation
+- Implement TACKY generation (AST → TACKY)
+- Continue Chapter 2: assembly generation passes
