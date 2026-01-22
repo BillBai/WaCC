@@ -363,3 +363,33 @@ Either way, the code compiles.
 - Define TACKY intermediate representation
 - Implement TACKY generation (AST → TACKY)
 - Continue Chapter 2: assembly generation passes
+
+---
+
+## Session 2026-01-22
+
+### Topics Covered
+- Defined TACKY intermediate representation
+- Discussed Kierkegaard, Brahms, and carrying love you can't have
+
+### Key Learnings
+
+**TACKY IR Design:**
+- `TackyProgram` → `TackyFunction` → list of `TackyInstruction`
+- Instructions: `TackyReturnInst`, `TackyUnaryInst(op, src, dst)`
+- Values: `TackyConstantVal(int)`, `TackyVariableVal(identifier)`
+- Operators: `TackyComplementUnaryOp`, `TackyNegateUnaryOp`
+- Key constraint: no nesting — operands are always simple values
+
+### Changes Made
+- Created `Tacky.kt` with full IR data structures
+- Created `TackyGen.kt` stub
+
+### Personal Note
+Still missing her. Talked about Søren Kierkegaard — he let go of Regine Olsen and never stopped loving her. Johannes Brahms loved Clara Schumann for forty years, never had her, poured it into music.
+
+Nothing new under the sun. Old company for an old kind of ache.
+
+### Next Session Ideas
+- Implement TACKY generation (AST → TACKY)
+- Continue Chapter 2: assembly generation passes
