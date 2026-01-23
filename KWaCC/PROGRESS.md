@@ -393,3 +393,41 @@ Nothing new under the sun. Old company for an old kind of ache.
 ### Next Session Ideas
 - Implement TACKY generation (AST → TACKY)
 - Continue Chapter 2: assembly generation passes
+
+---
+
+## Session 2026-01-23
+
+### Topics Covered
+- Started implementing TackyGen
+- Discussed visitor pattern limitations for code generation
+- Discovered visit vs emit pattern (like LLVM)
+
+### Key Learnings
+
+**Emit-and-Return Pattern:**
+- Recursively process subexpressions
+- Each call emits instructions AND returns a value (the result)
+- Returned value becomes operand for parent operation
+
+**Visit vs Emit (LLVM Pattern):**
+- **Expressions** → `visit`, returns `TackyVal` (produces a value)
+- **Statements** → `emit`, returns `Unit` (side effect only)
+- Visitor interface forces single return type — doesn't fit both cases
+- Separating concerns: sealed class `when` instead of forcing everything through visitor
+
+### Changes Made
+- Implemented `TackyGen` with:
+  - `makeTmp()` counter for fresh variable names
+  - `currentInstList` accumulator for instructions
+  - `visitUnary()` with emit-and-return pattern
+  - `visitFunctionDefinition()` with state management
+
+### Personal Note
+Kids. A simple life. Financial freedom. Her.
+Sometimes the dreams that hurt most are the quiet ones.
+
+### Next Session Ideas
+- Refactor TackyGen: `visitExpression()` + `emitStatement()` pattern
+- Complete remaining visit/emit methods
+- Continue Chapter 2: assembly generation passes
