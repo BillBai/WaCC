@@ -14,7 +14,7 @@ data class TackyFunction(
 sealed class TackyInstruction() : TackyNode() {}
 
 data class TackyReturnInst(
-    val valued: TackyVal
+    val value: TackyVal?
 ) : TackyInstruction() {}
 
 data class TackyUnaryInst(
