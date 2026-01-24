@@ -64,4 +64,12 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
         }
         return builder.toString()
     }
+
+    override fun visitAsmNegInst(node: AsmNegInst): String {
+        return "NEG ${node.operand.accept(this)}"
+    }
+
+    override fun visitAsmNotInst(node: AsmNotInst): String {
+        return "NOT ${node.operand.accept(this)}"
+    }
 }

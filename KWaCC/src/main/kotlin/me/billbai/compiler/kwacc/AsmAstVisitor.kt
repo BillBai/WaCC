@@ -8,4 +8,6 @@ interface AsmAstVisitor<T> {
     fun visitAsmImmOperand(node: AsmImmOperand): T
     fun visitAsmRegisterOperand(node: AsmRegisterOperand): T
     fun visitAsmInstList(node: AsmInstList): T
+    fun visitAsmNegInst(node: AsmNegInst): T
+    fun visitAsmNotInst(node: AsmNotInst): T
 }

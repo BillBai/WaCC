@@ -45,6 +45,19 @@ object AsmRegisterOperand : AsmOperand() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegisterOperand(this)
 }
 
+data class AsmNegInst(
+    val operand: AsmOperand
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNegInst(this)
+}
+
+data class AsmNotInst(
+    val operand: AsmOperand
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNotInst(this)
+}
+
+
 data class AsmInstList(
     val instList: List<AsmInstruction>,
 ): AsmInstruction() {

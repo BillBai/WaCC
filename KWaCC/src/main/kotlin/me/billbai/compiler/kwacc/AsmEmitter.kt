@@ -64,4 +64,12 @@ class AsmEmitter(
         }
     }
 
+    override fun visitAsmNegInst(node: AsmNegInst) {
+        printWriter.println(("\t negl ${formatOperand(node.operand)}"))
+    }
+
+    override fun visitAsmNotInst(node: AsmNotInst) {
+        printWriter.println(("\t notl ${formatOperand(node.operand)}"))
+    }
+
 }
