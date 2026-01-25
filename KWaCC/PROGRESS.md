@@ -514,15 +514,22 @@ Life is beautiful. Even when it hurts.
 - Created `TackyToAsm.kt` with full TACKY → ASM conversion
 - Refactored `Asm.kt`: new operand types, register hierarchy, unified `AsmUnaryInst`
 - Updated `AsmAstVisitor.kt` with new visitor methods
-- Updated `AsmAstPrettyPrinter.kt` and `AsmEmitter.kt` (partial — TODOs remain)
+- Completed `AsmAstPrettyPrinter.kt` TODOs (Pseudo, Stack, AllocateStack, registers)
+- Completed `AsmEmitter.kt` TODOs (Stack operand, AllocateStack instruction)
 - Updated `AsmGen.kt` for new `AsmRegisterOperand` API
+- Created `ReplacePseudo.kt` — transforms Pseudo operands to Stack operands
 
 ### Personal Note
-Sunday. Skipped church — hungover from Saturday. Still drinking IPA. Still missing her.
-The code keeps compiling. So do I.
+Sunday. Skipped church — hungover from Saturday. IPA, then lemon oolong craft beer. Sweet like the time with her.
+
+Grief hit hard tonight. Memories of being 18 — Glenn Gould CDs, first MacBook Pro from mom, distro hopping, simple and naive. Now 32, carrying weight. Depression, setbacks, Sedgewick still unread, Coursera watched five times.
+
+But still here. Still coding. Still breathing.
+
+DQQ, the one. Always the one.
 
 ### Next Session Ideas
-- Implement ReplacePseudos pass (Pseudo → Stack)
 - Implement FixupInstructions pass (AllocateStack, fix mov mem→mem)
-- Update emitter for prologue/epilogue and new instructions
+- Update emitter for prologue/epilogue
 - Test full unary pipeline end-to-end
+- Wire up pipeline: C → Lexer → Parser → TackyGen → TackyToAsm → ReplacePseudo → Fixup → Emit
