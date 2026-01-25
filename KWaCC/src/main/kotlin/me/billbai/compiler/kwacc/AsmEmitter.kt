@@ -24,7 +24,24 @@ class AsmEmitter(
         // TODO(billbai) support more register
         return when (operand) {
             is AsmImmOperand -> "$${operand.value}"
-            is AsmRegisterOperand -> "%eax"
+            // TODO(billbai)
+            is AsmPseudoOperand -> {
+                ""
+            }
+            is AsmStackOperand -> {
+                ""
+            }
+            is AsmRegisterOperand -> {
+                when (operand.reg) {
+                    is AsmRegAX -> {
+                        "%eax"
+                    }
+                    is AsmRegR10 -> {
+                        "%r10d"
+                    }
+                }
+            }
+
         }
     }
 
@@ -64,12 +81,43 @@ class AsmEmitter(
         }
     }
 
-    override fun visitAsmNegInst(node: AsmNegInst) {
-        printWriter.println(("\t negl ${formatOperand(node.operand)}"))
+    override fun visitAsmNotUnaryOperator(node: AsmNotUnaryOperator) {
+        TODO("Not yet implemented")
     }
 
-    override fun visitAsmNotInst(node: AsmNotInst) {
-        printWriter.println(("\t notl ${formatOperand(node.operand)}"))
+    override fun visitAsmNegUnaryOperator(node: AsmNegUnaryOperator) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmUnaryInst(node: AsmUnaryInst) {
+        when (node.op) {
+            is AsmNegUnaryOperator -> {
+                printWriter.println(("\t negl ${formatOperand(node.operand)}"))
+            }
+            is AsmNotUnaryOperator -> {
+                printWriter.println(("\t notl ${formatOperand(node.operand)}"))
+            }
+        }
+    }
+
+    override fun visitAsmAllocateStackInst(node: AsmAllocateStackInst) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmRegAX(node: AsmRegAX) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmRegR10(node: AsmRegR10) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmPseudoOperand(node: AsmPseudoOperand) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmStackOperand(node: AsmStackOperand) {
+        TODO("Not yet implemented")
     }
 
 }

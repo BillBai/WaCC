@@ -43,7 +43,7 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
 
     override fun visitAsmRetInst(node: AsmRetInst): String {
         val builder = StringBuilder()
-        builder.append("Ret(${node.operand?.accept(this)})")
+        builder.append("Ret")
         return builder.toString()
     }
 
@@ -52,8 +52,10 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     }
 
     override fun visitAsmRegisterOperand(node: AsmRegisterOperand): String {
-        // TODO(bilbai): add other regs
-        return "Reg(EAX)"
+        return when (node.reg) {
+            is AsmRegAX -> "Reg(EAX)"
+            is AsmRegR10 -> "Reg(R10D)"
+        }
     }
 
     override fun visitAsmInstList(node: AsmInstList): String {
@@ -65,11 +67,41 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
         return builder.toString()
     }
 
-    override fun visitAsmNegInst(node: AsmNegInst): String {
-        return "NEG ${node.operand.accept(this)}"
+    override fun visitAsmNotUnaryOperator(node: AsmNotUnaryOperator): String {
+        TODO("Not yet implemented")
     }
 
-    override fun visitAsmNotInst(node: AsmNotInst): String {
-        return "NOT ${node.operand.accept(this)}"
+    override fun visitAsmNegUnaryOperator(node: AsmNegUnaryOperator): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmUnaryInst(node: AsmUnaryInst): String {
+        val builder = StringBuilder()
+        val opStr = when (node.op) {
+            is AsmNegUnaryOperator -> "Neg"
+            is AsmNotUnaryOperator -> "Not"
+        }
+        builder.append("Unary(op_type=${opStr}, operand=${node.operand.accept(this)}")
+        return builder.toString()
+    }
+
+    override fun visitAsmAllocateStackInst(node: AsmAllocateStackInst): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmRegAX(node: AsmRegAX): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmRegR10(node: AsmRegR10): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmPseudoOperand(node: AsmPseudoOperand): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmStackOperand(node: AsmStackOperand): String {
+        TODO("Not yet implemented")
     }
 }

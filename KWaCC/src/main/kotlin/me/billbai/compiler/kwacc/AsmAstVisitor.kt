@@ -8,6 +8,12 @@ interface AsmAstVisitor<T> {
     fun visitAsmImmOperand(node: AsmImmOperand): T
     fun visitAsmRegisterOperand(node: AsmRegisterOperand): T
     fun visitAsmInstList(node: AsmInstList): T
-    fun visitAsmNegInst(node: AsmNegInst): T
-    fun visitAsmNotInst(node: AsmNotInst): T
+    fun visitAsmNotUnaryOperator(node: AsmNotUnaryOperator): T
+    fun visitAsmNegUnaryOperator(node: AsmNegUnaryOperator): T
+    fun visitAsmUnaryInst(node: AsmUnaryInst): T
+    fun visitAsmAllocateStackInst(node: AsmAllocateStackInst): T
+    fun visitAsmRegAX(node: AsmRegAX): T
+    fun visitAsmRegR10(node: AsmRegR10): T
+    fun visitAsmPseudoOperand(node: AsmPseudoOperand): T
+    fun visitAsmStackOperand(node: AsmStackOperand): T
 }

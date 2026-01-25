@@ -55,17 +55,15 @@ class AsmGenerator : AstVisitor<AsmNode> {
 
     override fun visitReturnStmt(node: ReturnStmt): AsmNode {
         val instList = mutableListOf<AsmInstruction>()
-        var retOperand: AsmOperand? = null
         if (node.expression != null) {
             val result = node.expression.accept(this)
             if (result is AsmOperand) {
-                val dstOperand = AsmRegisterOperand
+                val dstOperand = AsmRegisterOperand(AsmRegAX)
                 val movInst = AsmMovInst(src = result, dst = dstOperand)
-                retOperand = dstOperand
                 instList.add(movInst)
             }
         }
-        instList.add(AsmRetInst(retOperand))
+        instList.add(AsmRetInst)
         return AsmInstList(instList);
     }
 

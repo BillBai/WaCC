@@ -26,9 +26,7 @@ data class AsmMovInst(
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmMovInst(this)
 }
 
-data class AsmRetInst(
-    val operand: AsmOperand?
-) : AsmInstruction() {
+object AsmRetInst : AsmInstruction() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRetInst(this)
 }
 
@@ -40,23 +38,64 @@ data class AsmImmOperand(
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmImmOperand(this)
 }
 
-// Only EAX for now, so make this object. Will add more registers later.
-object AsmRegisterOperand : AsmOperand() {
+sealed class AsmReg() : AsmNode() {}
+
+object AsmRegAX: AsmReg() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmRegAX(this)
+    }
+}
+
+object AsmRegR10: AsmReg() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmRegR10(this)
+    }
+}
+
+data class AsmRegisterOperand(
+    val reg : AsmReg
+) : AsmOperand() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegisterOperand(this)
 }
 
-data class AsmNegInst(
-    val operand: AsmOperand
-): AsmInstruction() {
-    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNegInst(this)
+data class AsmPseudoOperand(
+    val identifier: String,
+): AsmOperand() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmPseudoOperand(this)
+    }
 }
 
-data class AsmNotInst(
-    val operand: AsmOperand
-): AsmInstruction() {
-    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNotInst(this)
+data class AsmStackOperand(
+    val offset: Int,
+): AsmOperand() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmStackOperand(this)
+    }
 }
 
+sealed class AsmUnaryOperator() : AsmNode() {}
+
+object AsmNotUnaryOperator : AsmUnaryOperator() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNotUnaryOperator(this)
+}
+
+object AsmNegUnaryOperator : AsmUnaryOperator() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmNegUnaryOperator(this)
+}
+
+data class AsmUnaryInst(
+    val op : AsmUnaryOperator,
+    val operand: AsmOperand
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmUnaryInst(this)
+}
+
+data class AsmAllocateStackInst(
+    val size: Int,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmAllocateStackInst(this)
+}
 
 data class AsmInstList(
     val instList: List<AsmInstruction>,
