@@ -68,11 +68,11 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     }
 
     override fun visitAsmNotUnaryOperator(node: AsmNotUnaryOperator): String {
-        TODO("Not yet implemented")
+        return "Not"
     }
 
     override fun visitAsmNegUnaryOperator(node: AsmNegUnaryOperator): String {
-        TODO("Not yet implemented")
+        return "Neg"
     }
 
     override fun visitAsmUnaryInst(node: AsmUnaryInst): String {
@@ -81,27 +81,27 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
             is AsmNegUnaryOperator -> "Neg"
             is AsmNotUnaryOperator -> "Not"
         }
-        builder.append("Unary(op_type=${opStr}, operand=${node.operand.accept(this)}")
+        builder.append("Unary(op_type=${opStr}, operand=${node.operand.accept(this)})")
         return builder.toString()
     }
 
     override fun visitAsmAllocateStackInst(node: AsmAllocateStackInst): String {
-        TODO("Not yet implemented")
+        return "AllocateStack(${node.size})"
     }
 
     override fun visitAsmRegAX(node: AsmRegAX): String {
-        TODO("Not yet implemented")
+        return "AX"
     }
 
     override fun visitAsmRegR10(node: AsmRegR10): String {
-        TODO("Not yet implemented")
+        return "R10"
     }
 
     override fun visitAsmPseudoOperand(node: AsmPseudoOperand): String {
-        TODO("Not yet implemented")
+        return "Pseudo(\"${node.identifier}\")"
     }
 
     override fun visitAsmStackOperand(node: AsmStackOperand): String {
-        TODO("Not yet implemented")
+        return "Stack(${node.offset})"
     }
 }

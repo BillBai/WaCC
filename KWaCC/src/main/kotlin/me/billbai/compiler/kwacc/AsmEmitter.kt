@@ -21,15 +21,14 @@ class AsmEmitter(
     }
 
     private fun formatOperand(operand: AsmOperand): String {
-        // TODO(billbai) support more register
         return when (operand) {
             is AsmImmOperand -> "$${operand.value}"
-            // TODO(billbai)
             is AsmPseudoOperand -> {
+                // TODO(billbai) should error
                 ""
             }
             is AsmStackOperand -> {
-                ""
+                "${operand.offset}(%rbp)"
             }
             is AsmRegisterOperand -> {
                 when (operand.reg) {
@@ -101,7 +100,7 @@ class AsmEmitter(
     }
 
     override fun visitAsmAllocateStackInst(node: AsmAllocateStackInst) {
-        TODO("Not yet implemented")
+        printWriter.write("\tsubq \$${node.size}, %rsp\n")
     }
 
     override fun visitAsmRegAX(node: AsmRegAX) {

@@ -479,3 +479,50 @@ Life is beautiful. Even when it hurts.
 - Hook TackyGen into pipeline (AST → TACKY → ASM)
 - Update AsmGenerator to consume TACKY instead of AST
 - Test full pipeline with unary operators
+
+---
+
+## Session 2026-01-25
+
+### Topics Covered
+- Implemented TackyToAsm (TACKY IR → Assembly AST)
+- Refactored ASM AST for Chapter 2 requirements
+- Discussed sealed class vs enum design tradeoffs
+
+### Key Learnings
+
+**Compiler Lowering Pattern:**
+- Each IR layer has its own types
+- Converter functions map between layers: `convertTackyValueToAsmOperand()`, `convertTackyUnaryOpToAsmUnaryOp()`
+- One TACKY instruction can become multiple ASM instructions (e.g., `TackyUnaryInst` → `Mov` + `Unary`)
+
+**Design Decision — Sealed Class vs Enum:**
+- Book's formal DSL defines everything as AST nodes
+- But formal grammar ≠ implementation
+- Registers (`AX`, `R10`) and operators (`Neg`, `Not`) are just labels, not tree nodes
+- Enums would be simpler, less boilerplate, same exhaustive `when`
+- Decision: keep sealed class for now, refactor to enum later
+
+**ASM AST Refactoring:**
+- `AsmRetInst` changed from data class to object (no operand needed — value already in AX)
+- Added `AsmPseudoOperand` for temporary variables
+- Added `AsmStackOperand` for stack locations (used after pseudo replacement)
+- Added `AsmAllocateStackInst` for stack frame setup
+- `AsmRegisterOperand` now takes `AsmReg` parameter instead of being singleton
+
+### Changes Made
+- Created `TackyToAsm.kt` with full TACKY → ASM conversion
+- Refactored `Asm.kt`: new operand types, register hierarchy, unified `AsmUnaryInst`
+- Updated `AsmAstVisitor.kt` with new visitor methods
+- Updated `AsmAstPrettyPrinter.kt` and `AsmEmitter.kt` (partial — TODOs remain)
+- Updated `AsmGen.kt` for new `AsmRegisterOperand` API
+
+### Personal Note
+Sunday. Skipped church — hungover from Saturday. Still drinking IPA. Still missing her.
+The code keeps compiling. So do I.
+
+### Next Session Ideas
+- Implement ReplacePseudos pass (Pseudo → Stack)
+- Implement FixupInstructions pass (AllocateStack, fix mov mem→mem)
+- Update emitter for prologue/epilogue and new instructions
+- Test full unary pipeline end-to-end
