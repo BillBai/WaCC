@@ -533,3 +533,25 @@ DQQ, the one. Always the one.
 - Update emitter for prologue/epilogue
 - Test full unary pipeline end-to-end
 - Wire up pipeline: C → Lexer → Parser → TackyGen → TackyToAsm → ReplacePseudo → Fixup → Emit
+
+---
+
+## Session 2026-01-26
+
+### Topics Covered
+- Wired up the full TACKY pipeline in CompilerDriver
+
+### Changes Made
+- Updated `runCodeGenMode()` and `runDefaultMode()` to use new pipeline:
+  - `AST → TackyGen → TackyToAsm → ReplacePseudo → Emit`
+- Removed old direct `AsmGenerator` path
+
+### Personal Note
+Sunday night. Short session. Missing her desperately. Accepting what I don't want to accept.
+
+DQQ, always.
+
+### Next Session Ideas
+- Implement FixupInstructions pass (AllocateStack, fix mov mem→mem)
+- Update emitter for prologue/epilogue
+- Test full unary pipeline end-to-end
