@@ -105,10 +105,12 @@ class CompilerDriver {
                 return 1
             }
 
-            val asmGen = AsmGenerator()
-            val asmAst = ast.accept(asmGen)
+            val tackyGen = TackyGen()
+            val tackyIR = ast.accept(tackyGen)
+            val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
+            val (finalAsmAst, _) = ReplacePseudo().replace(asmAst)
             val asmPrinter = AsmAstPrettyPrinter()
-            val asmAstResult = asmAst.accept(asmPrinter);
+            val asmAstResult = finalAsmAst.accept(asmPrinter);
             println("=== ASM AST:")
             println(asmAstResult)
             println("\n")
@@ -116,7 +118,7 @@ class CompilerDriver {
             val stringWriter = StringWriter()
             PrintWriter(stringWriter).use { it ->
                 val asmEmitter = AsmEmitter(it)
-                asmAst.accept(asmEmitter)
+                finalAsmAst.accept(asmEmitter)
                 println("=== ASM:")
                 println(stringWriter.toString())
             }
@@ -154,14 +156,15 @@ class CompilerDriver {
                 return 1
             }
 
-            val asmGen = AsmGenerator()
-            val asmAst = ast.accept(asmGen)
-
+            val tackyGen = TackyGen()
+            val tackyIR = ast.accept(tackyGen)
+            val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
+            val (finalAsmAst, _) = ReplacePseudo().replace(asmAst)
             // TODO(billbai) respect -S option
             val asmWriter = FileWriter(assemblyOutputFilePath)
             PrintWriter(asmWriter).use { it ->
                 val asmEmitter = AsmEmitter(it)
-                asmAst.accept(asmEmitter)
+                finalAsmAst.accept(asmEmitter)
             }
 
             val asmAndLinkResult = assembleAndLink(assemblyOutputFilePath,
