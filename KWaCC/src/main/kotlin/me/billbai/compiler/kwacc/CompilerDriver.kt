@@ -108,7 +108,8 @@ class CompilerDriver {
             val tackyGen = TackyGen()
             val tackyIR = ast.accept(tackyGen)
             val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
-            val (finalAsmAst, _) = ReplacePseudo().replace(asmAst)
+            val (asmAfterPseudo, stackSize) = ReplacePseudo().replace(asmAst)
+            val finalAsmAst = FixupInstructions().fixup(asmAfterPseudo, stackSize)
             val asmPrinter = AsmAstPrettyPrinter()
             val asmAstResult = finalAsmAst.accept(asmPrinter);
             println("=== ASM AST:")
@@ -159,7 +160,8 @@ class CompilerDriver {
             val tackyGen = TackyGen()
             val tackyIR = ast.accept(tackyGen)
             val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
-            val (finalAsmAst, _) = ReplacePseudo().replace(asmAst)
+            val (asmAfterPseudo, stackSize) = ReplacePseudo().replace(asmAst)
+            val finalAsmAst = FixupInstructions().fixup(asmAfterPseudo, stackSize)
             // TODO(billbai) respect -S option
             val asmWriter = FileWriter(assemblyOutputFilePath)
             PrintWriter(asmWriter).use { it ->
