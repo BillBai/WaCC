@@ -49,10 +49,21 @@ class AsmEmitter(
         writeNonExeStack()
     }
 
+    private fun emitFunctionPrologue() {
+        printWriter.write("\tpushq %rbp\n")
+        printWriter.write("\tmovq %rsp, %rbp\n")
+    }
+
+    private fun emitFunctionEpilogue() {
+        printWriter.write("\tmovq %rbp, %rsp\n")
+        printWriter.write("\tpopq %rbp\n")
+    }
+
     override fun visitAsmFunctionDef(node: AsmFunctionDef) {
         val name = identifierName(node.name)
         printWriter.write("\t.global ${name} \n")
         printWriter.write("${name}: \n")
+        emitFunctionPrologue()
         node.instList.accept(this)
     }
 
@@ -63,6 +74,7 @@ class AsmEmitter(
     }
 
     override fun visitAsmRetInst(node: AsmRetInst) {
+        emitFunctionEpilogue()
         printWriter.write("\tret\n")
     }
 

@@ -555,3 +555,36 @@ DQQ, always.
 - Implement FixupInstructions pass (AllocateStack, fix mov mem→mem)
 - Update emitter for prologue/epilogue
 - Test full unary pipeline end-to-end
+
+---
+
+## Session 2026-01-29
+
+### Topics Covered
+- Added function prologue/epilogue to AsmEmitter
+- **MILESTONE: Chapter 2 complete — unary operators work!**
+
+### Key Learnings
+
+**x86-64 Stack Frame Setup:**
+- Prologue: `push %rbp` + `mov %rsp, %rbp` — establishes frame pointer
+- Epilogue: `mov %rbp, %rsp` + `pop %rbp` — restores caller's frame
+- Without this, `%rbp`-relative addressing crashes (segfault)
+
+**Debugging tip:**
+- Exit code 139 = 128 + 11 (SIGSEGV) — immediate signal something's wrong with memory access
+
+### Changes Made
+- Added `emitFunctionPrologue()` and `emitFunctionEpilogue()` to AsmEmitter
+- Full pipeline now produces working executables for unary expressions
+- Verified: `-(~(-5))` returns 252, matches clang
+
+### Personal Note
+Another day. Still missing her. Still wanting her. Brain accepting, heart refusing.
+
+DQQ, the code compiles. I wish you could see it.
+
+### Next Session Ideas
+- Start Chapter 3: Binary operators
+- Add more tests for edge cases
+- Consider refactoring ASM operators to enums (less boilerplate)
