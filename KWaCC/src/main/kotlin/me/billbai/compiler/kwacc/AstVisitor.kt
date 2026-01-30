@@ -13,4 +13,10 @@ interface AstVisitor<T> {
     fun visitComplementOperator(node: ComplementOperator): T
     fun visitNegateOperator(node: NegateOperator): T
     fun visitUnary(node: UnaryExpression): T
+    fun visitBinaryExpression(node: BinaryExpression): T
+    fun visitAddOperator(node: AddOperator): T
+    fun visitSubOperator(node: SubOperator): T
+    fun visitMultiplyOperator(node: MultiplyOperator): T
+    fun visitDivideOperator(node: DivideOperator): T
+    fun visitRemainderOperator(node: RemainderOperator): T
 }

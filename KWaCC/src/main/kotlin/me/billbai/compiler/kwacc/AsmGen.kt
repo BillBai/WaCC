@@ -87,4 +87,28 @@ class AsmGenerator : AstVisitor<AsmNode> {
     override fun visitUnary(node: UnaryExpression): AsmNode {
         TODO("Not yet implemented")
     }
+
+    override fun visitBinaryExpression(node: BinaryExpression): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAddOperator(node: AddOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSubOperator(node: SubOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitMultiplyOperator(node: MultiplyOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitDivideOperator(node: DivideOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitRemainderOperator(node: RemainderOperator): AsmNode {
+        TODO("Not yet implemented")
+    }
 }

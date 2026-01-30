@@ -165,6 +165,10 @@ class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
                     '}' ->  TokenResult.Success(Token.CloseBrace, curLoc)
                     ';' ->  TokenResult.Success(Token.Semicolon, curLoc)
                     '~' -> TokenResult.Success(Token.Tilde, curLoc)
+                    '+' -> TokenResult.Success(Token.Plus, curLoc)
+                    '*' -> TokenResult.Success(Token.Asterisk, curLoc)
+                    '/' -> TokenResult.Success(Token.Slash, curLoc)
+                    '%' -> TokenResult.Success(Token.Percent, curLoc)
                     '-' -> {
                         val nextChar = peek()
                         if (nextChar == '-') {

@@ -85,4 +85,14 @@ class AstPrettyPrinter : AstVisitor<String> {
     override fun visitUnary(node: UnaryExpression): String {
         return "UnaryOperator(op=${node.unaryOperator.accept(this)}, expression=${node.expression.accept(this)})"
     }
+
+    override fun visitBinaryExpression(node: BinaryExpression): String {
+        return "BinaryExpression(op=${node.binaryOperator.accept(this)}, lhs=${node.lhs.accept(this)}, rhs=${node.rhs.accept(this)})"
+    }
+
+    override fun visitAddOperator(node: AddOperator): String = "Add(+)"
+    override fun visitSubOperator(node: SubOperator): String = "Sub(-)"
+    override fun visitMultiplyOperator(node: MultiplyOperator): String = "Mul(*)"
+    override fun visitDivideOperator(node: DivideOperator): String = "Div(/)"
+    override fun visitRemainderOperator(node: RemainderOperator): String = "Rem(%)"
 }

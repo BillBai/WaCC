@@ -105,3 +105,52 @@ object ComplementOperator : UnaryOperator() {
 object NegateOperator : UnaryOperator() {
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitNegateOperator(this)
 }
+
+data class BinaryExpression(
+    val binaryOperator: BinaryOperator,
+    val lhs: Expression,
+    val rhs: Expression,
+) : Expression(null) {
+    constructor(
+        binaryOperator: BinaryOperator,
+        lhs: Expression,
+        rhs: Expression,
+        type: Type?
+    ): this(binaryOperator, lhs, rhs) {
+        this.type = type
+    }
+
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitBinaryExpression(this)
+}
+
+sealed class BinaryOperator() : AstNode() {}
+
+object AddOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitAddOperator(this)
+    }
+}
+
+object SubOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitSubOperator(this)
+    }
+}
+
+object MultiplyOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitMultiplyOperator(this)
+    }
+}
+
+object DivideOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitDivideOperator(this)
+    }
+}
+
+object RemainderOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitRemainderOperator(this)
+    }
+}

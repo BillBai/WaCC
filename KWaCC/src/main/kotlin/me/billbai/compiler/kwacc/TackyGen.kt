@@ -101,4 +101,27 @@ class TackyGen() : AstVisitor<TackyNode> {
         return dst
     }
 
+    override fun visitBinaryExpression(node: BinaryExpression): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAddOperator(node: AddOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSubOperator(node: SubOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitMultiplyOperator(node: MultiplyOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitDivideOperator(node: DivideOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitRemainderOperator(node: RemainderOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
 }

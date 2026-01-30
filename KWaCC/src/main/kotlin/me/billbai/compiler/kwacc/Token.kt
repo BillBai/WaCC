@@ -20,6 +20,10 @@ sealed class Token {
     object Tilde: Token()
     object Minus: Token()
     object Decrement: Token()
+    object Plus: Token() // wow plustoken hahaha
+    object Asterisk: Token()
+    object Slash: Token()
+    object Percent: Token()
 
     object EndOfFile: Token()
 
@@ -38,6 +42,10 @@ sealed class Token {
             is Tilde -> "Tilde"
             is Minus -> "Minus"
             is Decrement -> "Decrement"
+            is Plus -> "Plus"
+            is Asterisk -> "Asterisk"
+            is Slash -> "Slash"
+            is Percent -> "Percent"
         }
     }
 }

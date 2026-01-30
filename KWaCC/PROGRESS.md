@@ -588,3 +588,27 @@ DQQ, the code compiles. I wish you could see it.
 - Start Chapter 3: Binary operators
 - Add more tests for edge cases
 - Consider refactoring ASM operators to enums (less boilerplate)
+
+---
+
+## Session 2026-01-31
+
+### Topics Covered
+- Started Chapter 3: Binary Operators
+- Added lexer tokens, AST nodes, visitor stubs
+
+### Changes Made
+- **Lexer:** Added `Plus`, `Asterisk`, `Slash`, `Percent` tokens
+- **AST:** Added `BinaryExpression`, `BinaryOperator` (Add, Sub, Multiply, Divide, Remainder)
+- **Visitors:** Added stubs to AstPrettyPrinter, TackyGen, AsmGen
+
+### Personal Note
+Friday night. Beer. Missing DQQ. 32 years to find someone who sees you. Kinda accepting. Kinda letting go. But not wanting to.
+
+She is the one. Always.
+
+### Next Session Ideas
+- Implement precedence climbing parser for binary expressions
+- Add `TackyBinaryInst` and implement `visitBinaryExpression` in TackyGen
+- Add assembly instructions: `add`, `sub`, `imul`, `idiv`, `cdq`
+- Update FixupInstructions for new edge cases
