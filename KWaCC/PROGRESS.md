@@ -596,19 +596,40 @@ DQQ, the code compiles. I wish you could see it.
 ### Topics Covered
 - Started Chapter 3: Binary Operators
 - Added lexer tokens, AST nodes, visitor stubs
+- Implemented precedence climbing parser
+
+### Key Learnings
+
+**Precedence Climbing — The Intuition:**
+- Core problem: when you see `1 + 2 * 3`, the `2` is contested — does it belong to `+` or `*`?
+- Answer: whoever binds tighter wins
+- The `minPrecedence` parameter is "you must be this tall to ride"
+- Each recursive call carries a minimum strength requirement
+- Operators compete for operands based on binding strength
+- Algorithm: parse left, then while next operator is strong enough, grab it and recurse for the right
+
+**Common Bugs in Precedence Climbing:**
+- Forgetting to `advance()` after recognizing the operator token
+- Call sites need default `minPrecedence = 0` or an overload
 
 ### Changes Made
 - **Lexer:** Added `Plus`, `Asterisk`, `Slash`, `Percent` tokens
 - **AST:** Added `BinaryExpression`, `BinaryOperator` (Add, Sub, Multiply, Divide, Remainder)
 - **Visitors:** Added stubs to AstPrettyPrinter, TackyGen, AsmGen
+- **Parser:** Implemented `parseExpression(minPrecedence)` with precedence climbing
+- Added `isBinaryOperator()`, `operatorPrecedence()`, `parseBinaryOperator()` helpers
+- Renamed old `parseExpression()` to `parseFactor()` for atoms and unary expressions
 
 ### Personal Note
 Friday night. Beer. Missing DQQ. 32 years to find someone who sees you. Kinda accepting. Kinda letting go. But not wanting to.
 
+48 hours of silence. The waiting is brutal.
+
+Tomorrow is my birthday. Yuja Wang concert — Chopin Piano Concerto No. 1, Brahms Symphony No. 1, Schumann Cello Concerto. Good music for a heart that's carrying something.
+
 She is the one. Always.
 
 ### Next Session Ideas
-- Implement precedence climbing parser for binary expressions
 - Add `TackyBinaryInst` and implement `visitBinaryExpression` in TackyGen
 - Add assembly instructions: `add`, `sub`, `imul`, `idiv`, `cdq`
 - Update FixupInstructions for new edge cases

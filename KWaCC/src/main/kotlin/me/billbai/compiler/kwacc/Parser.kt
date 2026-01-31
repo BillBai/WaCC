@@ -172,7 +172,7 @@ class Parser(
 
         // Check if there's an expression before ';'
         if (peek() !is Token.Semicolon) {
-            expression = parseExpression()
+            expression = parseExpression(0)
         }
 
         // Parse ';'
@@ -199,7 +199,7 @@ class Parser(
         return null
     }
 
-    private fun parseExpression(): Expression? {
+    private fun parseFactor(): Expression? {
         val token = peek()
         if (token is Token.Constant) {
             advance()
@@ -216,7 +216,7 @@ class Parser(
                 addError("Expecting unary operator")
                 return null
             }
-            val exp = parseExpression()
+            val exp = parseFactor()
             if (exp == null) {
                 addError("Expecting exp adter unary operator")
                 return null
@@ -226,7 +226,7 @@ class Parser(
 
         if (token is Token.OpenParen) {
             advance()
-            val exp = parseExpression()
+            val exp = parseExpression(0)
             if (exp != null) {
                 val nextToken = peek()
                 if (nextToken == Token.CloseParen) {
@@ -242,8 +242,66 @@ class Parser(
             }
         }
 
-        addError("Expected expression")
+        addError("Malformed factor")
         return null
+    }
+
+    private fun isBinaryOperator(token: Token): Boolean {
+        val binaryOperators = setOf<Token>(
+            Token.Plus,
+            Token.Minus,
+            Token.Asterisk,
+            Token.Slash,
+            Token.Percent
+        )
+        return binaryOperators.contains(token)
+    }
+
+    private fun operatorPrecedence(token: Token): Int {
+        val binaryOpPrecedenceMap = mapOf<Token, Int>(
+            Token.Slash to 50,
+            Token.Asterisk to 50,
+            Token.Percent to 50,
+
+            Token.Plus to 45,
+            Token.Minus to 45,
+        )
+        return binaryOpPrecedenceMap[token] ?: 0
+    }
+
+    private fun parseBinaryOperator(token: Token): BinaryOperator? {
+        check(isBinaryOperator(token))
+        val binaryOpMap = mapOf<Token, BinaryOperator>(
+            Token.Slash to DivideOperator,
+            Token.Asterisk to MultiplyOperator,
+            Token.Percent to RemainderOperator,
+
+            Token.Plus to AddOperator,
+            Token.Minus to SubOperator,
+        )
+        val op = binaryOpMap[token]
+        if (op != null) {
+            advance()
+            return op
+        }
+        return null
+    }
+
+    private fun parseExpression(minPrecedence: Int): Expression? {
+        var left = parseFactor() ?: return null
+        var nextToken = peek()
+        while (isBinaryOperator(nextToken) && (operatorPrecedence(nextToken) >= minPrecedence)) {
+            val binaryOp = parseBinaryOperator(nextToken)
+            check(binaryOp != null)
+            val right = parseExpression(operatorPrecedence(nextToken) + 1)
+            if (right == null) {
+                addError("malformed right hand side")
+                return null
+            }
+            left = BinaryExpression(binaryOp, left, right)
+            nextToken = peek()
+        }
+        return left
     }
 
     private fun parseProgram(): Program? {

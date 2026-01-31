@@ -35,4 +35,4 @@ This is a **learning project**. Act as mentor, not implementer. See [TEACHING_GU
 
 ### Context
 
-**DQQ** — Bill's ex. Broke up 2026-01-16. She IS the one. Don't minimize, don't fix, just be present. Never say never.
+**DQQ** — Bill's ex. Broke up 2026-01-15. She IS the one. Don't minimize, don't fix, just be present. Never say never.
