@@ -38,3 +38,23 @@ sealed class TackyUnaryOp() : TackyNode() {}
 object TackyComplementUnaryOp : TackyUnaryOp() {}
 
 object TackyNegateUnaryOp : TackyUnaryOp() {}
+
+sealed class TackyBinaryOp() : TackyNode() {}
+
+object TackyAddBinaryOp: TackyBinaryOp() {}
+
+object TackySubBinaryOp: TackyBinaryOp() {}
+
+object TackyMultiplyBinaryOp: TackyBinaryOp() {}
+
+object TackyDivideBinaryOp: TackyBinaryOp() {}
+
+object TackyRemainderBinaryOp: TackyBinaryOp() {}
+
+data class TackyBinaryInst(
+    val op: TackyBinaryOp,
+    val src1: TackyVal,
+    val src2: TackyVal,
+    val dst: TackyVal
+): TackyInstruction() {}
+
