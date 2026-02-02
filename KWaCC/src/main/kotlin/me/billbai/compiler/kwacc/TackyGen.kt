@@ -102,7 +102,28 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitBinaryExpression(node: BinaryExpression): TackyNode {
-        TODO("Not yet implemented")
+        val lhsVal = node.lhs.accept(this)
+        check(lhsVal is TackyVal)
+        val rhsVal = node.rhs.accept(this)
+        check(rhsVal is TackyVal)
+
+        val binOp = when (node.binaryOperator) {
+            AddOperator -> TackyAddBinaryOp
+            DivideOperator -> TackyDivideBinaryOp
+            MultiplyOperator -> TackyMultiplyBinaryOp
+            RemainderOperator -> TackyRemainderBinaryOp
+            SubOperator -> TackySubBinaryOp
+        }
+
+        val dst = TackyVariableVal(makeTmp())
+        val inst = TackyBinaryInst(
+            binOp,
+            src1 = lhsVal,
+            src2 = rhsVal,
+            dst = dst,
+        )
+        currentInstList.add(inst)
+        return dst
     }
 
     override fun visitAddOperator(node: AddOperator): TackyNode {

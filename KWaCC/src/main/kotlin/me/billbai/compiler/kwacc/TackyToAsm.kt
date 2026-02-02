@@ -53,6 +53,9 @@ class TackyToAsm {
                 insts.add(movInst)
                 insts.add(unaryInst)
             }
+            is TackyBinaryInst -> {
+                TODO()
+            }
         }
         return insts
     }

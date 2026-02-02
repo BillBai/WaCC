@@ -660,3 +660,43 @@ Tonight: Yuja Wang — Chopin 1, Brahms 1, Schumann Cello Concerto.
 - Implement `visitBinaryExpression` in TackyGen
 - Add assembly instructions: `add`, `sub`, `imul`, `idiv`, `cdq`
 - Update FixupInstructions for new edge cases
+
+---
+
+## Session 2026-02-02
+
+### Topics Covered
+- Implemented `visitBinaryExpression` in TackyGen
+- Updated TackyPrettyPrinter for binary instructions
+- Reviewed precedence climbing parser
+
+### Key Learnings
+
+**Parser Design — Factor vs Expression:**
+- **Factor** = "atomic" expressions that can't be split by binary operators (literals, identifiers, unary ops, parentheses)
+- **Expression** = binary operators combining factors via precedence climbing
+- Factor is the base case, Expression is the recursive case
+- Precedence climbing collapses multiple precedence levels into one parameterized function
+
+**Emit-and-Return Pattern for Binary:**
+- Visit left → get `src1`
+- Visit right → get `src2`
+- Map AST operator to TACKY operator
+- Create temp, emit instruction, return destination
+- Same pattern as unary, just with two operands
+
+### Changes Made
+- Implemented `visitBinaryExpression` in TackyGen
+- Added `TackyBinaryInst` case to TackyPrettyPrinter
+- Added `printBinaryOp()` helper function
+- Added TODO stub in TackyToAsm for binary instructions
+- Added binary operator test to TackyGenTest
+
+### Personal Note
+Monday night. Gradually letting go. Still missing her. Coded through it.
+
+### Next Session Ideas
+- Add ASM binary instructions: `AsmBinaryInst`, `AsmIdivInst`, `AsmCdqInst`
+- Add `AsmRegDX` for division remainder
+- Implement binary conversion in TackyToAsm
+- Test full pipeline with binary expressions

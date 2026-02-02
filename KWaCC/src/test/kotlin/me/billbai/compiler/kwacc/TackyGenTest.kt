@@ -29,4 +29,30 @@ class TackyGenTest {
         val printer = TackyPrettyPrinter()
         println(printer.print(tackyProgram as TackyProgram))
     }
+
+    @Test
+    fun `test tacky gen with binary operators`() {
+        val sourceFileInfo = SourceFileInfo("", "")
+        val input = "int main() { return 1 + 2 * 3; }"
+
+        // Lex
+        val lexer = Lexer(sourceFileInfo, input.byteInputStream())
+        val tokenizeResult = lexer.tokenize()
+        assertTrue(tokenizeResult.tokens.isNotEmpty())
+
+        // Parse
+        val parser = Parser(tokenizeResult.tokenStream)
+        val parseResult = parser.parse()
+        assertTrue(parseResult.errors.isEmpty())
+        val ast = parseResult.ast!!
+
+        // TackyGen
+        val tackyGen = TackyGen()
+        val tackyProgram = ast.accept(tackyGen)
+        assertTrue(tackyProgram is TackyProgram)
+
+        // Print it out with the pretty printer
+        val printer = TackyPrettyPrinter()
+        println(printer.print(tackyProgram as TackyProgram))
+    }
 }

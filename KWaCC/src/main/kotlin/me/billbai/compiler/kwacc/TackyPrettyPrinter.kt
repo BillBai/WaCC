@@ -13,15 +13,26 @@ class TackyPrettyPrinter {
 
     fun printInstruction(inst: TackyInstruction): String {
         return when (inst) {
-            is TackyUnaryInst -> "${printVal(inst.dst)} = ${printOp(inst.op)} ${printVal(inst.src)}"
+            is TackyUnaryInst -> "${printVal(inst.dst)} = ${printUnaryOp(inst.op)} ${printVal(inst.src)}"
             is TackyReturnInst -> "Return ${inst.value?.let { printVal(it) } ?: "void"}"
+            is TackyBinaryInst -> "${printVal(inst.dst)} = ${printVal(inst.src1)} ${printBinaryOp(inst.op)} ${printVal(inst.src2)}"
         }
     }
 
-    private fun printOp(op: TackyUnaryOp): String {
+    private fun printUnaryOp(op: TackyUnaryOp): String {
         return when (op) {
             is TackyNegateUnaryOp -> "Negate"
             is TackyComplementUnaryOp -> "Complement"
+        }
+    }
+
+    private fun printBinaryOp(op: TackyBinaryOp): String {
+        return when (op) {
+            is TackyAddBinaryOp -> "Add"
+            TackyDivideBinaryOp -> "Divide"
+            TackyMultiplyBinaryOp -> "Multiply"
+            TackyRemainderBinaryOp -> "Remainder"
+            TackySubBinaryOp -> "Subtract"
         }
     }
 
