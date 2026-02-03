@@ -13,7 +13,14 @@ interface AsmAstVisitor<T> {
     fun visitAsmUnaryInst(node: AsmUnaryInst): T
     fun visitAsmAllocateStackInst(node: AsmAllocateStackInst): T
     fun visitAsmRegAX(node: AsmRegAX): T
+    fun visitAsmRegDX(node: AsmRegDX): T
     fun visitAsmRegR10(node: AsmRegR10): T
     fun visitAsmPseudoOperand(node: AsmPseudoOperand): T
     fun visitAsmStackOperand(node: AsmStackOperand): T
+    fun visitAsmAddBinaryOperator(node: AsmAddBinaryOperator): T
+    fun visitAsmSubBinaryOperator(node: AsmSubBinaryOperator): T
+    fun visitAsmMultiplyBinaryOperator(node: AsmMultiplyBinaryOperator): T
+    fun visitAsmBinaryInst(node: AsmBinaryInst): T
+    fun visitAsmIdivInst(node: AsmIdivInst): T
+    fun visitAsmCdqInst(node: AsmCdqInst): T
 }

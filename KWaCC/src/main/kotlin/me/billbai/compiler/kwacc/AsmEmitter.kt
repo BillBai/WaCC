@@ -32,12 +32,9 @@ class AsmEmitter(
             }
             is AsmRegisterOperand -> {
                 when (operand.reg) {
-                    is AsmRegAX -> {
-                        "%eax"
-                    }
-                    is AsmRegR10 -> {
-                        "%r10d"
-                    }
+                    is AsmRegAX -> "%eax"
+                    is AsmRegR10 -> "%r10d"
+                    is AsmRegDX -> "%edx"
                 }
             }
 
@@ -131,4 +128,36 @@ class AsmEmitter(
         TODO("Not yet implemented")
     }
 
+    override fun visitAsmRegDX(node: AsmRegDX) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmAddBinaryOperator(node: AsmAddBinaryOperator) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmSubBinaryOperator(node: AsmSubBinaryOperator) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmMultiplyBinaryOperator(node: AsmMultiplyBinaryOperator) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmBinaryInst(node: AsmBinaryInst) {
+        val opName = when (node.op) {
+            is AsmAddBinaryOperator -> "addl"
+            is AsmSubBinaryOperator -> "subl"
+            is AsmMultiplyBinaryOperator -> "imull"
+        }
+        printWriter.println("\t$opName ${formatOperand(node.src)}, ${formatOperand(node.dst)}")
+    }
+
+    override fun visitAsmIdivInst(node: AsmIdivInst) {
+        printWriter.println("\tidivl ${formatOperand(node.operand)}")
+    }
+
+    override fun visitAsmCdqInst(node: AsmCdqInst) {
+        printWriter.println("\tcdq")
+    }
 }

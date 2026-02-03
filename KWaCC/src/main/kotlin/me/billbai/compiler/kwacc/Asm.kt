@@ -97,6 +97,45 @@ data class AsmAllocateStackInst(
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmAllocateStackInst(this)
 }
 
+sealed class AsmBinaryOperator(): AsmNode() {}
+
+object AsmSubBinaryOperator: AsmBinaryOperator() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmSubBinaryOperator(this)
+    }
+}
+
+object AsmAddBinaryOperator: AsmBinaryOperator() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmAddBinaryOperator(this)
+}
+
+object AsmMultiplyBinaryOperator: AsmBinaryOperator() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmMultiplyBinaryOperator(this)
+}
+
+data class AsmBinaryInst(
+    val op: AsmBinaryOperator,
+    val src: AsmOperand,
+    val dst: AsmOperand,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmBinaryInst(this)
+}
+
+data class AsmIdivInst(
+    val operand: AsmOperand
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmIdivInst(this)
+}
+
+object AsmCdqInst: AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmCdqInst(this)
+}
+
+object AsmRegDX: AsmReg() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegDX(this)
+}
+
+
 data class AsmInstList(
     val instList: List<AsmInstruction>,
 ): AsmInstruction() {

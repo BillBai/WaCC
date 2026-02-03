@@ -55,6 +55,7 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
         return when (node.reg) {
             is AsmRegAX -> "Reg(EAX)"
             is AsmRegR10 -> "Reg(R10D)"
+            is AsmRegDX -> "Reg(EDX)"
         }
     }
 
@@ -104,4 +105,27 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     override fun visitAsmStackOperand(node: AsmStackOperand): String {
         return "Stack(${node.offset})"
     }
+
+    override fun visitAsmRegDX(node: AsmRegDX): String = "DX"
+
+    override fun visitAsmAddBinaryOperator(node: AsmAddBinaryOperator): String = "Add"
+
+    override fun visitAsmSubBinaryOperator(node: AsmSubBinaryOperator): String = "Sub"
+
+    override fun visitAsmMultiplyBinaryOperator(node: AsmMultiplyBinaryOperator): String = "Mult"
+
+    override fun visitAsmBinaryInst(node: AsmBinaryInst): String {
+        val opStr = when (node.op) {
+            is AsmAddBinaryOperator -> "Add"
+            is AsmSubBinaryOperator -> "Sub"
+            is AsmMultiplyBinaryOperator -> "Mult"
+        }
+        return "Binary(op=$opStr, src=${node.src.accept(this)}, dst=${node.dst.accept(this)})"
+    }
+
+    override fun visitAsmIdivInst(node: AsmIdivInst): String {
+        return "Idiv(${node.operand.accept(this)})"
+    }
+
+    override fun visitAsmCdqInst(node: AsmCdqInst): String = "Cdq"
 }
