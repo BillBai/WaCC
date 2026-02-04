@@ -32,6 +32,15 @@ class TackyToAsm {
         }
     }
 
+    private fun convertTackyBinaryOpToAsmUnaryOp(tackyBinaryOp: TackyBinaryOp): AsmBinaryOperator {
+        return when (tackyBinaryOp) {
+            TackyAddBinaryOp -> AsmAddBinaryOperator
+            TackySubBinaryOp -> AsmSubBinaryOperator
+            TackyMultiplyBinaryOp -> AsmMultiplyBinaryOperator
+            else -> throw IllegalArgumentException("Not a simple binary op")
+        }
+    }
+
     private fun convertInstruction(inst: TackyInstruction): List<AsmInstruction> {
         val insts = mutableListOf<AsmInstruction>()
         when (inst) {
@@ -54,7 +63,38 @@ class TackyToAsm {
                 insts.add(unaryInst)
             }
             is TackyBinaryInst -> {
-                TODO()
+                val src1 = convertTackyValueToAsmOperand(inst.src1)
+                val src2 = convertTackyValueToAsmOperand(inst.src2)
+                val dst = convertTackyValueToAsmOperand(inst.dst)
+                when (inst.op) {
+                    is TackyAddBinaryOp, is TackySubBinaryOp, is TackyMultiplyBinaryOp -> {
+                        val asmBinOp = convertTackyBinaryOpToAsmUnaryOp(inst.op)
+                        val moveInst = AsmMovInst(src1, dst)
+                        val binOpInst = AsmBinaryInst(asmBinOp, src2, dst)
+                        insts.add(moveInst)
+                        insts.add(binOpInst)
+                    }
+                    is TackyDivideBinaryOp -> {
+                        val moveInst = AsmMovInst(src1, AsmRegisterOperand(AsmRegAX))
+                        val cdqInst = AsmCdqInst
+                        val idivInst = AsmIdivInst(src2)
+                        val moveResultInst = AsmMovInst(AsmRegisterOperand(AsmRegAX), dst)
+                        insts.add(moveInst)
+                        insts.add(cdqInst)
+                        insts.add(idivInst)
+                        insts.add(moveResultInst)
+                    }
+                    is TackyRemainderBinaryOp -> {
+                        val moveInst = AsmMovInst(src1, AsmRegisterOperand(AsmRegAX))
+                        val cdqInst = AsmCdqInst
+                        val idivInst = AsmIdivInst(src2)
+                        val moveResultInst = AsmMovInst(AsmRegisterOperand(AsmRegDX), dst)
+                        insts.add(moveInst)
+                        insts.add(cdqInst)
+                        insts.add(idivInst)
+                        insts.add(moveResultInst)
+                    }
+                }
             }
         }
         return insts

@@ -52,6 +52,11 @@ object AsmRegR10: AsmReg() {
     }
 }
 
+object AsmRegDX: AsmReg() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegDX(this)
+}
+
+
 data class AsmRegisterOperand(
     val reg : AsmReg
 ) : AsmOperand() {
@@ -130,11 +135,6 @@ data class AsmIdivInst(
 object AsmCdqInst: AsmInstruction() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmCdqInst(this)
 }
-
-object AsmRegDX: AsmReg() {
-    override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegDX(this)
-}
-
 
 data class AsmInstList(
     val instList: List<AsmInstruction>,

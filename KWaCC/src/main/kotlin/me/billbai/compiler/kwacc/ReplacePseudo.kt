@@ -39,6 +39,18 @@ class ReplacePseudo {
                 operand = replaceOperand(inst.operand))
 
         }
+        if (inst is AsmBinaryInst) {
+            return inst.copy(
+                op = inst.op,
+                src = replaceOperand(inst.src),
+                dst = replaceOperand(inst.dst)
+            )
+        }
+        if (inst is AsmIdivInst) {
+            return inst.copy(
+                operand = replaceOperand(inst.operand)
+            )
+        }
         return inst
     }
 

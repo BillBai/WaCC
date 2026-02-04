@@ -700,3 +700,39 @@ Monday night. Gradually letting go. Still missing her. Coded through it.
 - Add `AsmRegDX` for division remainder
 - Implement binary conversion in TackyToAsm
 - Test full pipeline with binary expressions
+
+---
+
+## Session 2026-02-04
+
+### Topics Covered
+- Added ASM binary instruction types
+- Implemented TackyToAsm binary conversion
+- Updated ReplacePseudo for binary/idiv instructions
+- Discovered x86 constraints requiring FixupInstructions updates
+
+### Key Learnings
+
+**x86 Division is Special:**
+- `idiv src` divides `%edx:%eax` by `src`
+- Quotient → `%eax`, Remainder → `%edx`
+- Need `cdq` first to sign-extend `%eax` into `%edx:%eax`
+
+**x86 Binary Instruction Constraints:**
+- `add`/`sub`: At most ONE memory operand
+- `imul` (2-operand): Destination MUST be a register
+- `idiv`: Operand CANNOT be immediate
+
+### Changes Made
+- Added `AsmBinaryOperator`, `AsmBinaryInst`, `AsmIdivInst`, `AsmCdqInst`, `AsmRegDX`
+- Implemented binary instruction conversion in TackyToAsm
+- Updated ReplacePseudo to handle `AsmBinaryInst` and `AsmIdivInst`
+- Updated visitor interfaces and implementations
+
+### Personal Note
+Tuesday night. Slightly drunk. Don't miss her right now. Will tomorrow. Learning to let the missing coexist with the living.
+
+### Next Session Ideas
+- Update FixupInstructions for binary constraints (mem-mem, imul dest, idiv imm)
+- Test full pipeline: `1 + 2 * 3` → executable
+- Test division and remainder operations
