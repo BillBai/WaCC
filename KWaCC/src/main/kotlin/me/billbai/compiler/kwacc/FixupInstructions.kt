@@ -36,6 +36,31 @@ class FixupInstructions {
                 return
             }
         }
+        if (inst is AsmBinaryInst) {
+            if (inst.op == AsmAddBinaryOperator || inst.op == AsmSubBinaryOperator) {
+                if (inst.src is AsmStackOperand && inst.dst is AsmStackOperand) {
+                    val tmpRegOperand = AsmRegisterOperand(AsmRegR10)
+                    val movSrcInst = AsmMovInst(src=inst.src, dst=tmpRegOperand)
+                    val newBinOpInst = AsmBinaryInst(inst.op, src=tmpRegOperand, dst=inst.dst)
+                    output.add(movSrcInst)
+                    output.add(newBinOpInst)
+                    return
+                }
+            }
+            if (inst.op == AsmMultiplyBinaryOperator) {
+                // TODO(billbai)
+            }
+        }
+        if (inst is AsmIdivInst) {
+            if (inst.operand is AsmImmOperand) {
+                val tmpRegOperand = AsmRegisterOperand(AsmRegR10)
+                val movInst = AsmMovInst(src=inst.operand, dst=tmpRegOperand)
+                val newIdivInst = AsmIdivInst(tmpRegOperand)
+                output.add(movInst)
+                output.add(newIdivInst)
+                return
+            }
+        }
 
         output.add(inst)
     }

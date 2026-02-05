@@ -15,6 +15,7 @@ interface AsmAstVisitor<T> {
     fun visitAsmRegAX(node: AsmRegAX): T
     fun visitAsmRegDX(node: AsmRegDX): T
     fun visitAsmRegR10(node: AsmRegR10): T
+    fun visitAsmRegR11(node: AsmRegR11): T
     fun visitAsmPseudoOperand(node: AsmPseudoOperand): T
     fun visitAsmStackOperand(node: AsmStackOperand): T
     fun visitAsmAddBinaryOperator(node: AsmAddBinaryOperator): T

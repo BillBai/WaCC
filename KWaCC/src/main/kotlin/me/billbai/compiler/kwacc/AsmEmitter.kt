@@ -34,6 +34,7 @@ class AsmEmitter(
                 when (operand.reg) {
                     is AsmRegAX -> "%eax"
                     is AsmRegR10 -> "%r10d"
+                    is AsmRegR11 -> "%r11d"
                     is AsmRegDX -> "%edx"
                 }
             }
@@ -117,6 +118,10 @@ class AsmEmitter(
     }
 
     override fun visitAsmRegR10(node: AsmRegR10) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAsmRegR11(node: AsmRegR11) {
         TODO("Not yet implemented")
     }
 

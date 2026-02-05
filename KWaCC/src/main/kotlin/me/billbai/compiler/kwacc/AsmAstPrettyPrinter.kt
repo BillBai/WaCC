@@ -55,6 +55,7 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
         return when (node.reg) {
             is AsmRegAX -> "Reg(EAX)"
             is AsmRegR10 -> "Reg(R10D)"
+            is AsmRegR11 -> "Reg(R11D)"
             is AsmRegDX -> "Reg(EDX)"
         }
     }
@@ -96,6 +97,10 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
 
     override fun visitAsmRegR10(node: AsmRegR10): String {
         return "R10"
+    }
+
+    override fun visitAsmRegR11(node: AsmRegR11): String {
+        return "R11"
     }
 
     override fun visitAsmPseudoOperand(node: AsmPseudoOperand): String {

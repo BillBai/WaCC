@@ -52,6 +52,12 @@ object AsmRegR10: AsmReg() {
     }
 }
 
+object AsmRegR11: AsmReg() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmRegR11(this)
+    }
+}
+
 object AsmRegDX: AsmReg() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmRegDX(this)
 }
