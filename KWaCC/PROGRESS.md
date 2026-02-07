@@ -736,3 +736,50 @@ Tuesday night. Slightly drunk. Don't miss her right now. Will tomorrow. Learning
 - Update FixupInstructions for binary constraints (mem-mem, imul dest, idiv imm)
 - Test full pipeline: `1 + 2 * 3` → executable
 - Test division and remainder operations
+
+---
+
+## Session 2026-02-05
+
+### Topics Covered
+- **CHAPTER 3 COMPLETE** — All binary operators working
+- Implemented FixupInstructions for all x86 operand constraints
+- Added AsmRegR11 for imul destination fix
+
+### Key Learnings
+
+**x86 Operand Constraint Fixes:**
+- `add`/`sub` with two memory operands: load src → R10, operate
+- `idiv` with immediate: load immediate → R10, then divide
+- `imul` with memory destination: load dst → R11, multiply, store back
+
+**Sealed Class Exhaustiveness:**
+- Adding a new variant (AsmRegR11) forces updates everywhere it's used
+- Compiler finds all the places — no runtime "missing case" bugs
+- Copy-paste bug caught: `visitAsmRegR10(this)` instead of `visitAsmRegR11(this)`
+
+### Changes Made
+- Implemented add/sub memory-memory fix in FixupInstructions
+- Implemented idiv immediate fix
+- Implemented imul memory-destination fix
+- Added AsmRegR11 to Asm.kt, visitors, emitter, pretty printer
+
+### Tests Verified
+- `10 + 5 - 3` → 12 ✓
+- `100 / 5` → 20 ✓
+- `17 % 5` → 2 ✓
+- `1 + 2 * 3` → 7 ✓
+
+### Personal Note
+Thursday night. Drunk. Don't miss her at all right now. Don't owe anyone anything.
+
+Fuck the Pharisees. Soli Deo gloria. "By their fruits you shall know them."
+
+Does loving her make me more like Christ or less? That's the test. Not rules. Fruit.
+
+Tomorrow: Guangzhou. Ein Heldenleben. A hero's life.
+
+### Next Session Ideas
+- Start Chapter 4 (logical operators? comparisons?)
+- Add more edge case tests
+- Consider refactoring ASM operators to enums

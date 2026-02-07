@@ -169,6 +169,81 @@ class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
                     '*' -> TokenResult.Success(Token.Asterisk, curLoc)
                     '/' -> TokenResult.Success(Token.Slash, curLoc)
                     '%' -> TokenResult.Success(Token.Percent, curLoc)
+                    '!' -> {
+                        val nextChar = peek()
+                        if (nextChar == '=') {
+                            advance()
+                            TokenResult.Success(Token.NotEqual, curLoc)
+                        } else {
+                            TokenResult.Success(Token.Bang, curLoc)
+                        }
+                    }
+                    '<' -> {
+                        val nextChar = peek()
+                        if (nextChar == '=') {
+                            advance()
+                            TokenResult.Success(Token.LessOrEqual, curLoc)
+                        } else {
+                            TokenResult.Success(Token.LessThan, curLoc)
+                        }
+                    }
+                    '>' -> {
+                        val nextChar = peek()
+                        if (nextChar == '=') {
+                            advance()
+                            TokenResult.Success(Token.GreaterOrEqual, curLoc)
+                        } else {
+                            TokenResult.Success(Token.GreaterThan, curLoc)
+                        }
+                    }
+                    '=' -> {
+                        val nextChar = peek()
+                        if (nextChar == '=') {
+                            advance()
+                            TokenResult.Success(Token.DoubleEqual, curLoc)
+                        } else {
+                            TokenResult.Error(
+                                LexerError(
+                                    "Unexpected character '$nextChar' after '$ch'",
+                                    curLine,
+                                    curColumn,
+                                    ch
+                                )
+                            )
+                        }
+                    }
+                    '&' -> {
+                        val nextChar = peek()
+                        if (nextChar == '&') {
+                            advance()
+                            TokenResult.Success(Token.LogicalAnd, curLoc)
+                        } else {
+                            TokenResult.Error(
+                                LexerError(
+                                    "Unexpected character '$nextChar' after '$ch'",
+                                    curLine,
+                                    curColumn,
+                                    ch
+                                )
+                            )
+                        }
+                    }
+                    '|' -> {
+                        val nextChar = peek()
+                        if (nextChar == '|') {
+                            advance()
+                            TokenResult.Success(Token.LogicalOr, curLoc)
+                        } else {
+                            TokenResult.Error(
+                                LexerError(
+                                    "Unexpected character '$nextChar' after '$ch'",
+                                    curLine,
+                                    curColumn,
+                                    ch
+                                )
+                            )
+                        }
+                    }
                     '-' -> {
                         val nextChar = peek()
                         if (nextChar == '-') {

@@ -25,6 +25,18 @@ sealed class Token {
     object Slash: Token()
     object Percent: Token()
 
+    object LessThan: Token()
+    object GreaterThan: Token()
+    object LessOrEqual: Token()
+    object GreaterOrEqual: Token()
+
+    object Bang: Token()
+    object LogicalAnd: Token()
+    object LogicalOr: Token()
+
+    object DoubleEqual: Token()
+    object NotEqual: Token()
+
     object EndOfFile: Token()
 
 
@@ -46,6 +58,15 @@ sealed class Token {
             is Asterisk -> "Asterisk"
             is Slash -> "Slash"
             is Percent -> "Percent"
+            is Bang -> "Bang"
+            is DoubleEqual -> "DoubleEqual"
+            is GreaterOrEqual -> "GreaterOrEqual"
+            is GreaterThan -> "GreaterThan"
+            is LessOrEqual -> "LessOrEqual"
+            is LessThan -> "LessThan"
+            is LogicalAnd -> "LogicalAnd"
+            is LogicalOr -> "LogicalOr"
+            is NotEqual -> "NotEqual"
         }
     }
 }
