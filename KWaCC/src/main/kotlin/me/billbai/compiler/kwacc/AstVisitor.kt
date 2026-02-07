@@ -19,4 +19,14 @@ interface AstVisitor<T> {
     fun visitMultiplyOperator(node: MultiplyOperator): T
     fun visitDivideOperator(node: DivideOperator): T
     fun visitRemainderOperator(node: RemainderOperator): T
+    fun visitNotOperator(node: NotOperator): T
+    fun visitAndOperator(node: AndOperator): T
+    fun visitOrOperator(node: OrOperator): T
+    fun visitEqualOperator(node: EqualOperator): T
+    fun visitNotEqualOperator(node: NotEqualOperator): T
+    fun visitLessThanOperator(node: LessOperator): T
+    fun visitGreaterThanOperator(node: GreaterOperator): T
+    fun visitLessOrEqualThanOperator(node: LessOrEqualOperator): T
+    fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): T
+
 }

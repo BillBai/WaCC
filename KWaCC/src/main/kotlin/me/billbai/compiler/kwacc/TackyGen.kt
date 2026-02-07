@@ -86,13 +86,15 @@ class TackyGen() : AstVisitor<TackyNode> {
         val subExpVal = node.expression.accept(this)
         check(subExpVal is TackyVal)
 
-        val op =when (node.unaryOperator) {
+        val op = when (node.unaryOperator) {
             is NegateOperator -> {
                 TackyNegateUnaryOp
             }
             is ComplementOperator -> {
                 TackyComplementUnaryOp
             }
+
+            NotOperator -> TODO()
         }
 
         val dst = TackyVariableVal(makeTmp())
@@ -113,6 +115,14 @@ class TackyGen() : AstVisitor<TackyNode> {
             MultiplyOperator -> TackyMultiplyBinaryOp
             RemainderOperator -> TackyRemainderBinaryOp
             SubOperator -> TackySubBinaryOp
+            AndOperator -> TODO()
+            EqualOperator -> TODO()
+            GreaterOperator -> TODO()
+            GreaterOrEqualOperator -> TODO()
+            LessOperator -> TODO()
+            LessOrEqualOperator -> TODO()
+            NotEqualOperator -> TODO()
+            OrOperator -> TODO()
         }
 
         val dst = TackyVariableVal(makeTmp())
@@ -143,6 +153,42 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitRemainderOperator(node: RemainderOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitNotOperator(node: NotOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitAndOperator(node: AndOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitOrOperator(node: OrOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitEqualOperator(node: EqualOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitNotEqualOperator(node: NotEqualOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitLessThanOperator(node: LessOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitGreaterThanOperator(node: GreaterOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitLessOrEqualThanOperator(node: LessOrEqualOperator): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): TackyNode {
         TODO("Not yet implemented")
     }
 }

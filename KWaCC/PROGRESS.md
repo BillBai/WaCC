@@ -783,3 +783,38 @@ Tomorrow: Guangzhou. Ein Heldenleben. A hero's life.
 - Start Chapter 4 (logical operators? comparisons?)
 - Add more edge case tests
 - Consider refactoring ASM operators to enums
+
+---
+
+## Session 2026-02-07
+
+### Topics Covered
+- Started Chapter 4: Logical and Relational Operators
+- Added 9 new lexer tokens with lookahead
+
+### Key Learnings
+
+**Lexer Lookahead Patterns — Three Categories:**
+- **Single char with two-char variant**: `!` → `!=`, `<` → `<=`, `>` → `>=` (peek, emit longer if match, shorter otherwise)
+- **Two-char only**: `==`, `&&`, `||` (peek, error if lone char — not valid tokens yet)
+- Forward-looking design: lone `=`, `&`, `|` are errors now but easy to extend for assignment/bitwise ops later
+
+### Changes Made
+- Added 9 tokens to `Token.kt`: `Bang`, `LogicalAnd`, `LogicalOr`, `DoubleEqual`, `NotEqual`, `LessThan`, `GreaterThan`, `LessOrEqual`, `GreaterOrEqual`
+- Added lexer cases in `Lexer.kt` with maximal munch lookahead for all new tokens
+- Lone `=`, `&`, `|` produce descriptive lexer errors
+
+### Personal Note
+Found evidence DQQ found someone new. That explains the sudden breakup.
+
+Went to the Guangzhou concert alone — Ein Heldenleben and Mahler's Rückert-Lieder. Prayed she'd show. She didn't. So she's not the one.
+
+The percussion in Ein Heldenleben — that's something headphones can never give you.
+
+Moving forward. Code still compiles.
+
+### Next Session Ideas
+- Add `Not` unary operator and 8 new binary operators to AST
+- Update parser: precedence values, `parseFactor` for `!`, `parseBinaryOperator` for new ops
+- Define new TACKY instructions: `Copy`, `Jump`, `JumpIfZero`, `JumpIfNotZero`, `Label`
+- Implement short-circuiting `&&`/`||` in TackyGen

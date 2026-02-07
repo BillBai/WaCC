@@ -195,6 +195,10 @@ class Parser(
             advance()
             return ComplementOperator
         }
+        if (token == Token.Bang) {
+            advance()
+            return NotOperator
+        }
         addError("Expecting - or ~ unary operator")
         return null
     }
@@ -210,7 +214,7 @@ class Parser(
             // Type will be determined during semantic analysis
             return Identifier(token.value, IntType)
         }
-        if (token is Token.Minus || token is Token.Tilde) {
+        if (token is Token.Minus || token is Token.Tilde || token is Token.Bang) {
             val operator = parseUnaryOperator()
             if (operator == null) {
                 addError("Expecting unary operator")
@@ -252,7 +256,15 @@ class Parser(
             Token.Minus,
             Token.Asterisk,
             Token.Slash,
-            Token.Percent
+            Token.Percent,
+            Token.LogicalAnd,
+            Token.LogicalOr,
+            Token.NotEqual,
+            Token.DoubleEqual,
+            Token.GreaterThan,
+            Token.GreaterOrEqual,
+            Token.LessThan,
+            Token.LessOrEqual,
         )
         return binaryOperators.contains(token)
     }
@@ -265,6 +277,18 @@ class Parser(
 
             Token.Plus to 45,
             Token.Minus to 45,
+
+            Token.LessThan to 35,
+            Token.LessOrEqual to 35,
+            Token.GreaterThan to 35,
+            Token.GreaterOrEqual to 35,
+
+            Token.DoubleEqual to 30,
+            Token.NotEqual to 30,
+
+            Token.LogicalAnd to 10,
+
+            Token.LogicalOr to 5,
         )
         return binaryOpPrecedenceMap[token] ?: 0
     }
@@ -278,6 +302,17 @@ class Parser(
 
             Token.Plus to AddOperator,
             Token.Minus to SubOperator,
+
+            Token.DoubleEqual to EqualOperator,
+            Token.NotEqual to NotEqualOperator,
+
+            Token.LessThan to LessOperator,
+            Token.LessOrEqual to LessOrEqualOperator,
+            Token.GreaterThan to GreaterOperator,
+            Token.GreaterOrEqual to GreaterOrEqualOperator,
+
+            Token.LogicalAnd to AndOperator,
+            Token.LogicalOr to OrOperator,
         )
         val op = binaryOpMap[token]
         if (op != null) {

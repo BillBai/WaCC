@@ -95,4 +95,40 @@ class AstPrettyPrinter : AstVisitor<String> {
     override fun visitMultiplyOperator(node: MultiplyOperator): String = "Mul(*)"
     override fun visitDivideOperator(node: DivideOperator): String = "Div(/)"
     override fun visitRemainderOperator(node: RemainderOperator): String = "Rem(%)"
+
+    override fun visitNotOperator(node: NotOperator): String {
+        return "Not(!)"
+    }
+
+    override fun visitAndOperator(node: AndOperator): String {
+        return "And(&&)"
+    }
+
+    override fun visitOrOperator(node: OrOperator): String {
+        return "Or(||)"
+    }
+
+    override fun visitEqualOperator(node: EqualOperator): String {
+        return "Eq(==)"
+    }
+
+    override fun visitNotEqualOperator(node: NotEqualOperator): String {
+        return "Neq(!=)"
+    }
+
+    override fun visitLessThanOperator(node: LessOperator): String {
+        return "Lt(<)"
+    }
+
+    override fun visitGreaterThanOperator(node: GreaterOperator): String {
+        return "Gt(>)"
+    }
+
+    override fun visitLessOrEqualThanOperator(node: LessOrEqualOperator): String {
+        return "LEq(<=)"
+    }
+
+    override fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): String {
+        return "GEq(>=)"
+    }
 }

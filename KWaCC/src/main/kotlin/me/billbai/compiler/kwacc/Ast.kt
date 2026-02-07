@@ -106,6 +106,10 @@ object NegateOperator : UnaryOperator() {
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitNegateOperator(this)
 }
 
+object NotOperator: UnaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitNotOperator(this)
+}
+
 data class BinaryExpression(
     val binaryOperator: BinaryOperator,
     val lhs: Expression,
@@ -152,5 +156,43 @@ object DivideOperator: BinaryOperator() {
 object RemainderOperator: BinaryOperator() {
     override fun <T> accept(visitor: AstVisitor<T>): T {
         return visitor.visitRemainderOperator(this)
+    }
+}
+
+object AndOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitAndOperator(this)
+}
+
+object OrOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitOrOperator(this)
+}
+
+object EqualOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitEqualOperator(this)
+}
+
+object NotEqualOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitNotEqualOperator(this)
+}
+
+object LessOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitLessThanOperator(this)
+}
+
+object GreaterOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitGreaterThanOperator(this)
+    }
+}
+
+object LessOrEqualOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitLessOrEqualThanOperator(this)
+    }
+}
+
+object GreaterOrEqualOperator: BinaryOperator() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitGreaterOrEqualOperator(this)
     }
 }
