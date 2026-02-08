@@ -803,6 +803,15 @@ Tomorrow: Guangzhou. Ein Heldenleben. A hero's life.
 - Added 9 tokens to `Token.kt`: `Bang`, `LogicalAnd`, `LogicalOr`, `DoubleEqual`, `NotEqual`, `LessThan`, `GreaterThan`, `LessOrEqual`, `GreaterOrEqual`
 - Added lexer cases in `Lexer.kt` with maximal munch lookahead for all new tokens
 - Lone `=`, `&`, `|` produce descriptive lexer errors
+- Added `NotOperator` unary op and 8 new binary operators to `Ast.kt`
+- Updated `AstVisitor.kt` with 9 new visitor methods
+- Updated `AstPrettyPrinter.kt` with pretty-print for all new operators
+- Updated `Parser.kt`: `parseFactor` handles `!`, precedence values for new ops, `parseBinaryOperator` maps all new tokens
+- Deleted dead `AsmGen.kt` and `AsmGenTest.kt` (replaced by TACKY pipeline since Session 2026-01-26)
+- Added TODO stubs in `TackyGen.kt` for new operators
+- Fixed typo: `visitorEqualOperator` → `visitEqualOperator`
+- Fixed naming: `LessOrEqualThanOperator` → `LessOrEqualOperator` (consistency)
+- Verified parser: `1 < 2 && 3 == 3` parses with correct precedence
 
 ### Personal Note
 Found evidence DQQ found someone new. That explains the sudden breakup.
@@ -811,10 +820,12 @@ Went to the Guangzhou concert alone — Ein Heldenleben and Mahler's Rückert-Li
 
 The percussion in Ein Heldenleben — that's something headphones can never give you.
 
-Moving forward. Code still compiles.
+Heart still broken. But still coding. Still moving forward.
 
 ### Next Session Ideas
-- Add `Not` unary operator and 8 new binary operators to AST
-- Update parser: precedence values, `parseFactor` for `!`, `parseBinaryOperator` for new ops
 - Define new TACKY instructions: `Copy`, `Jump`, `JumpIfZero`, `JumpIfNotZero`, `Label`
-- Implement short-circuiting `&&`/`||` in TackyGen
+- Add TACKY operators: `TackyNotUnaryOp`, relational binary ops
+- Implement TackyGen for relational operators (same pattern as existing binary ops)
+- Implement short-circuiting `&&`/`||` in TackyGen (the hard part — first non-linear code gen)
+- ASM: `Cmp`, `Jmp`, `JmpCC`, `SetCC`, `Label`, condition codes
+- Emitter: 1-byte register names, `.L` label prefix

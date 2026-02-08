@@ -58,3 +58,48 @@ data class TackyBinaryInst(
     val dst: TackyVal
 ): TackyInstruction() {}
 
+object TackyNotUnaryOp: TackyBinaryOp() {}
+
+object TackyEqualBinaryOp: TackyBinaryOp() {}
+
+object TackyNotEqualBinaryOp: TackyBinaryOp() {}
+
+object TackyLessOrEqualBinaryOp: TackyBinaryOp() {}
+
+object TackyLessBinaryOp: TackyBinaryOp() {}
+
+object TackyGreaterBinaryOp: TackyBinaryOp() {}
+
+object TackyGreaterOrEqualBinaryOp: TackyBinaryOp() {}
+
+object TackyAndBinaryOp: TackyBinaryOp() {}
+
+object TackyOrBinaryOp: TackyBinaryOp() {}
+
+
+data class TackyCopyInst(
+    val src: TackyVal,
+    val dst: TackyVal,
+): TackyInstruction() {}
+
+data class TackyJumpInst(
+    val target: String,
+): TackyInstruction() {}
+
+data class TackyJumpIfZeroInst(
+    val condition: TackyVal,
+    val target: String,
+): TackyInstruction() {}
+
+data class TackyJumpIfNotZeroInst(
+    val condition: TackyVal,
+    val target: String,
+): TackyInstruction() {}
+
+data class TackyLabelInst(
+    val identifier: String,
+): TackyInstruction() {}
+
+
+
+
