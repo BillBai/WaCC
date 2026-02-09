@@ -29,6 +29,7 @@ class TackyToAsm {
         return when (tackyUnaryOp) {
             TackyComplementUnaryOp -> AsmNotUnaryOperator
             TackyNegateUnaryOp -> AsmNegUnaryOperator
+            TackyNotUnaryOp -> TODO()
         }
     }
 
@@ -94,8 +95,23 @@ class TackyToAsm {
                         insts.add(idivInst)
                         insts.add(moveResultInst)
                     }
+
+                    TackyAndBinaryOp -> TODO()
+                    TackyEqualBinaryOp -> TODO()
+                    TackyGreaterBinaryOp -> TODO()
+                    TackyGreaterOrEqualBinaryOp -> TODO()
+                    TackyLessBinaryOp -> TODO()
+                    TackyLessOrEqualBinaryOp -> TODO()
+                    TackyNotEqualBinaryOp -> TODO()
+                    TackyOrBinaryOp -> TODO()
                 }
             }
+
+            is TackyCopyInst -> TODO()
+            is TackyJumpIfNotZeroInst -> TODO()
+            is TackyJumpIfZeroInst -> TODO()
+            is TackyJumpInst -> TODO()
+            is TackyLabelInst -> TODO()
         }
         return insts
     }

@@ -58,7 +58,7 @@ data class TackyBinaryInst(
     val dst: TackyVal
 ): TackyInstruction() {}
 
-object TackyNotUnaryOp: TackyBinaryOp() {}
+object TackyNotUnaryOp: TackyUnaryOp() {}
 
 object TackyEqualBinaryOp: TackyBinaryOp() {}
 
