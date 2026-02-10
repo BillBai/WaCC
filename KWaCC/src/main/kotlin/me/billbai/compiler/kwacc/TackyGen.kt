@@ -1,12 +1,20 @@
 package me.billbai.compiler.kwacc
 
 class TackyGen() : AstVisitor<TackyNode> {
-    private var tmpCounter : Int = 0
+    private var tmpCounter: Int = 0
 
-    private fun makeTmp() : String {
+    private fun makeTmp(): String {
         val tmp = "tmp.${tmpCounter}"
         tmpCounter += 1
         return tmp
+    }
+
+    private var labelCounter: Int = 0
+
+    private fun makeLabel(prefix: String): String {
+        val labelName = "${prefix}.${labelCounter}"
+        labelCounter += 1
+        return labelName
     }
 
     private var currentInstList : MutableList<TackyInstruction> = mutableListOf()
@@ -94,7 +102,9 @@ class TackyGen() : AstVisitor<TackyNode> {
                 TackyComplementUnaryOp
             }
 
-            NotOperator -> TODO()
+            NotOperator -> {
+                TackyNotUnaryOp
+            }
         }
 
         val dst = TackyVariableVal(makeTmp())
@@ -103,7 +113,93 @@ class TackyGen() : AstVisitor<TackyNode> {
         return dst
     }
 
+    private fun isShortCutBinaryOperator(op: BinaryOperator): Boolean {
+        return op is AndOperator || op is OrOperator
+    }
+
+    private fun emitShortCutBinaryExpression(node: BinaryExpression): TackyNode {
+        check(isShortCutBinaryOperator(node.binaryOperator))
+
+        if (node.binaryOperator == OrOperator) {
+            return emitOrBinaryExpression(node)
+        }
+
+        if (node.binaryOperator == AndOperator) {
+            return emitAndBinaryExpression(node)
+        }
+
+        TODO("Unexcepted short cut binary operator")
+    }
+
+    private fun emitAndBinaryExpression(node: BinaryExpression): TackyNode {
+        check(isShortCutBinaryOperator(node.binaryOperator))
+        val lhsVal = node.lhs.accept(this)
+        check(lhsVal is TackyVal)
+
+        val falseLabel = makeLabel("false_label")
+        val jumpInst = TackyJumpIfZeroInst(lhsVal, falseLabel)
+        currentInstList.add(jumpInst)
+
+        val rhsVal = node.rhs.accept(this)
+        check(rhsVal is TackyVal)
+        val jumpInst2 = TackyJumpIfZeroInst(rhsVal, falseLabel)
+        currentInstList.add(jumpInst2)
+
+        val resultVar = TackyVariableVal(makeTmp())
+        val trueResultInst = TackyCopyInst(TackyConstantVal(1), resultVar)
+        currentInstList.add(trueResultInst)
+        val endLabel = makeLabel("end")
+        val jumpToEndInst = TackyJumpInst(endLabel)
+        currentInstList.add(jumpToEndInst)
+
+        val falseLabelInst = TackyLabelInst(falseLabel)
+        currentInstList.add(falseLabelInst)
+
+        val falseResultInst = TackyCopyInst(TackyConstantVal(0), resultVar)
+        currentInstList.add(falseResultInst)
+
+        val endLabelInst = TackyLabelInst(endLabel)
+        currentInstList.add(endLabelInst)
+        return resultVar
+    }
+
+    private fun emitOrBinaryExpression(node: BinaryExpression): TackyNode {
+        check(isShortCutBinaryOperator(node.binaryOperator))
+        val lhsVal = node.lhs.accept(this)
+        check(lhsVal is TackyVal)
+
+        val trueLabel = makeLabel("true_label")
+        val jumpInst = TackyJumpIfNotZeroInst(lhsVal, trueLabel)
+        currentInstList.add(jumpInst)
+
+        val rhsVal = node.rhs.accept(this)
+        check(rhsVal is TackyVal)
+        val jumpInst2 = TackyJumpIfNotZeroInst(rhsVal, trueLabel)
+        currentInstList.add(jumpInst2)
+
+        val resultVar = TackyVariableVal(makeTmp())
+        val falseResultInst = TackyCopyInst(TackyConstantVal(0), resultVar)
+        currentInstList.add(falseResultInst)
+        val endLabel = makeLabel("end")
+        val jumpToEndInst = TackyJumpInst(endLabel)
+        currentInstList.add(jumpToEndInst)
+
+        val trueLabelInst = TackyLabelInst(trueLabel)
+        currentInstList.add(trueLabelInst)
+
+        val trueResultInst = TackyCopyInst(TackyConstantVal(1), resultVar)
+        currentInstList.add(trueResultInst)
+
+        val endLabelInst = TackyLabelInst(endLabel)
+        currentInstList.add(endLabelInst)
+        return resultVar
+    }
+
     override fun visitBinaryExpression(node: BinaryExpression): TackyNode {
+        if (isShortCutBinaryOperator(node.binaryOperator)) {
+            return emitShortCutBinaryExpression(node)
+        }
+
         val lhsVal = node.lhs.accept(this)
         check(lhsVal is TackyVal)
         val rhsVal = node.rhs.accept(this)
@@ -115,14 +211,14 @@ class TackyGen() : AstVisitor<TackyNode> {
             MultiplyOperator -> TackyMultiplyBinaryOp
             RemainderOperator -> TackyRemainderBinaryOp
             SubOperator -> TackySubBinaryOp
-            AndOperator -> TODO()
-            EqualOperator -> TODO()
-            GreaterOperator -> TODO()
-            GreaterOrEqualOperator -> TODO()
-            LessOperator -> TODO()
-            LessOrEqualOperator -> TODO()
-            NotEqualOperator -> TODO()
+            EqualOperator -> TackyEqualBinaryOp
+            GreaterOperator -> TackyGreaterBinaryOp
+            GreaterOrEqualOperator -> TackyGreaterOrEqualBinaryOp
+            LessOperator -> TackyLessBinaryOp
+            LessOrEqualOperator -> TackyLessOrEqualBinaryOp
+            NotEqualOperator -> TackyNotEqualBinaryOp
             OrOperator -> TODO()
+            AndOperator -> TODO()
         }
 
         val dst = TackyVariableVal(makeTmp())

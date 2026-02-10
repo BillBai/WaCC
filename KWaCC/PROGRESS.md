@@ -822,10 +822,72 @@ The percussion in Ein Heldenleben — that's something headphones can never give
 
 Heart still broken. But still coding. Still moving forward.
 
+---
+
+## Session 2026-02-09
+
+### Topics Covered
+- Added TACKY IR types for Chapter 4
+- Updated TackyPrettyPrinter and TackyToAsm with new branches
+- Deleted dead AsmGen code
+- Beethoven No. 5 concert
+
+### Key Learnings
+
+**Sealed Class Hierarchy Matters:**
+- New operators initially extended `TackyNode()` instead of `TackyUnaryOp()`/`TackyBinaryOp()` — wrong parent
+- If operators extend the wrong parent, exhaustive `when` won't require handling them
+- The type system only protects you if the hierarchy is correct
+
+**Short-Circuiting Changes Everything:**
+- Up until now, every expression recursively evaluated all subexpressions
+- `&&`/`||` break that — the value of one subexpression determines whether another executes at all
+- This is why `Jump`, `JumpIfZero`, `JumpIfNotZero`, `Label` exist — they skip code
+
+### Changes Made
+- Added TACKY IR types: `TackyCopyInst`, `TackyJumpInst`, `TackyJumpIfZeroInst`, `TackyJumpIfNotZeroInst`, `TackyLabelInst`
+- Added `TackyNotUnaryOp` and 8 new binary ops to `Tacky.kt`
+- Updated `TackyPrettyPrinter` with print cases for all new instructions and operators
+- Updated `TackyToAsm` with TODO stubs for new instructions and operators
+- Fixed typo: `taget` → `target` in `TackyJumpInst`
+- Fixed parent class: new ops now extend correct sealed parents
+
+### Personal Note
+Beethoven No. 5. Fate knocking at the door. Still in despair. But still showing up.
+
+Missed yesterday's streak — made it up with a backdated commit. Two sessions in one day.
+
+---
+
+## Session 2026-02-10
+
+### Topics Covered
+- Implemented TackyGen for all Chapter 4 operators
+- First non-linear code generation: short-circuiting `&&`/`||`
+
+### Key Learnings
+
+**Short-Circuiting Implementation Pattern:**
+- `&&`: evaluate lhs → `JumpIfZero` to false label → evaluate rhs → `JumpIfZero` to false label → `Copy(1, result)` → `Jump(end)` → false: `Copy(0, result)` → end
+- `||`: mirror image — `JumpIfNotZero` to true label, fall through to `result = 0`
+- Key insight: must check operator *before* evaluating rhs, so short-circuit operators need their own code path at the top of `visitBinaryExpression`
+
+**Code Organization:**
+- `isShortCutBinaryOperator()` guard at top of `visitBinaryExpression` for early dispatch
+- `emitAndBinaryExpression()` and `emitOrBinaryExpression()` as separate methods — cleaner than inlining
+- `makeLabel(prefix)` for unique label generation, parallel to `makeTmp()` for variables
+
+### Changes Made
+- Added `makeLabel(prefix)` to TackyGen for unique label generation
+- Implemented `NotOperator` → `TackyNotUnaryOp` in `visitUnary`
+- Implemented 6 relational operators in `visitBinaryExpression` (same emit-and-return pattern)
+- Implemented `emitAndBinaryExpression()` with `JumpIfZero` short-circuiting
+- Implemented `emitOrBinaryExpression()` with `JumpIfNotZero` short-circuiting
+- Added `isShortCutBinaryOperator()` guard to dispatch `&&`/`||` before evaluating rhs
+
 ### Next Session Ideas
-- Define new TACKY instructions: `Copy`, `Jump`, `JumpIfZero`, `JumpIfNotZero`, `Label`
-- Add TACKY operators: `TackyNotUnaryOp`, relational binary ops
-- Implement TackyGen for relational operators (same pattern as existing binary ops)
-- Implement short-circuiting `&&`/`||` in TackyGen (the hard part — first non-linear code gen)
-- ASM: `Cmp`, `Jmp`, `JmpCC`, `SetCC`, `Label`, condition codes
-- Emitter: 1-byte register names, `.L` label prefix
+- Add ASM types: `AsmCmpInst`, `AsmJmpInst`, `AsmJmpCCInst`, `AsmSetCCInst`, `AsmLabelInst`, condition codes
+- Implement TackyToAsm for new TACKY instructions (fill in TODO stubs)
+- Update ReplacePseudo for `Cmp` and `SetCC`
+- Update FixupInstructions for `cmp` constraints (no mem-mem, no const as 2nd operand)
+- Update Emitter: 1-byte register names (`%al`, `%dl`, `%r10b`, `%r11b`), `.L` label prefix
