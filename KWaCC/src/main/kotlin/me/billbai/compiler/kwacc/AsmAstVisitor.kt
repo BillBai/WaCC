@@ -24,4 +24,9 @@ interface AsmAstVisitor<T> {
     fun visitAsmBinaryInst(node: AsmBinaryInst): T
     fun visitAsmIdivInst(node: AsmIdivInst): T
     fun visitAsmCdqInst(node: AsmCdqInst): T
+    fun visitAsmCmpInst(node: AsmCmpInst): T
+    fun visitAsmJmpInst(node: AsmJmpInst): T
+    fun visitAsmJmpCCInst(node: AsmJmpCCInst): T
+    fun visitAsmSetCCInst(node: AsmSetCCInst): T
+    fun visitAsmLabelInst(node: AsmLabelInst): T
 }

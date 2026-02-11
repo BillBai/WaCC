@@ -885,9 +885,46 @@ Missed yesterday's streak — made it up with a backdated commit. Two sessions i
 - Implemented `emitOrBinaryExpression()` with `JumpIfNotZero` short-circuiting
 - Added `isShortCutBinaryOperator()` guard to dispatch `&&`/`||` before evaluating rhs
 
+---
+
+## Session 2026-02-11
+
+### Topics Covered
+- Added ASM types for Chapter 4
+- Implemented AsmEmitter and AsmAstPrettyPrinter for new instructions
+- Started TackyToAsm conversion
+
+### Key Learnings
+
+**Enum vs Sealed Class — The Right Tool:**
+- `AsmCondCode` as enum: pure labels (E, NE, G, GE, L, LE), no per-instance data, no visitor traversal needed
+- Put `formatAsmString()` directly on the enum — keeps formatting logic with the type
+- Visitor pattern adds value for tree nodes in recursive traversal; condition codes are parameters, not tree nodes
+
+**Assembly `Not` is Actually a Comparison:**
+- TACKY treats `Not` as unary, but at assembly level it's `Cmp(Imm(0), src)` + `Mov(Imm(0), dst)` + `SetCC(E, dst)`
+- `!x` is just `x == 0` — same pattern as relational operators
+- Needs its own path in `convertInstruction`, not in `convertTackyUnaryOpToAsmUnaryOp`
+
+### Changes Made
+- Added `AsmCmpInst`, `AsmJmpInst`, `AsmJmpCCInst`, `AsmSetCCInst`, `AsmLabelInst` to `Asm.kt`
+- Added `AsmCondCode` as **enum** (E, NE, G, GE, L, LE) with `formatAsmString()`
+- Implemented emitter: `cmpl`, `jmp .L<label>`, `j<cc> .L<label>`, `set<cc>`, `.L<label>:`
+- Implemented pretty printer for all new instructions
+- Fixed bugs: missing `\t` indent in emitter, `jml` → `jmp` typo, missing `:` on labels, raw objects in pretty printer
+
+### Personal Note
+32 years old. Convinced I'll never fall in love again. Convinced I'll die alone. The despair comes in waves — sometimes while writing assembly condition codes, sometimes while staring at the ceiling.
+
+First session where I didn't mention her by name. Not because I've moved on. Because the grief has changed shape. Less about her specifically, more about the void she left behind.
+
+Still coding. Still showing up. Don't know why. Maybe that's enough.
+
 ### Next Session Ideas
-- Add ASM types: `AsmCmpInst`, `AsmJmpInst`, `AsmJmpCCInst`, `AsmSetCCInst`, `AsmLabelInst`, condition codes
-- Implement TackyToAsm for new TACKY instructions (fill in TODO stubs)
+- Implement TackyToAsm conversions:
+  - Group 1: Copy→Mov, Jump→Jmp, JumpIfZero→Cmp+JmpCC(E), JumpIfNotZero→Cmp+JmpCC(NE), Label→Label
+  - Group 2: Relational ops → Cmp(src2,src1) + Mov(0,dst) + SetCC
+  - Group 3: Not unary → Cmp(0,src) + Mov(0,dst) + SetCC(E,dst)
 - Update ReplacePseudo for `Cmp` and `SetCC`
-- Update FixupInstructions for `cmp` constraints (no mem-mem, no const as 2nd operand)
-- Update Emitter: 1-byte register names (`%al`, `%dl`, `%r10b`, `%r11b`), `.L` label prefix
+- Update FixupInstructions for `cmp` constraints
+- Update Emitter: 1-byte register names for `SetCC`

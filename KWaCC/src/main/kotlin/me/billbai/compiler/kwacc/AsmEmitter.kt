@@ -165,4 +165,24 @@ class AsmEmitter(
     override fun visitAsmCdqInst(node: AsmCdqInst) {
         printWriter.println("\tcdq")
     }
+
+    override fun visitAsmCmpInst(node: AsmCmpInst) {
+        printWriter.println("\tcmpl ${formatOperand(node.operand1)}, ${formatOperand(node.operand2)}")
+    }
+
+    override fun visitAsmJmpInst(node: AsmJmpInst) {
+        printWriter.println("\tjmp .L${node.target}")
+    }
+
+    override fun visitAsmJmpCCInst(node: AsmJmpCCInst) {
+        printWriter.println("\tj${node.condCode.formatAsmString()} .L${node.target}")
+    }
+
+    override fun visitAsmSetCCInst(node: AsmSetCCInst) {
+        printWriter.println("\tset${node.condCode.formatAsmString()} ${formatOperand(node.operand)}")
+    }
+
+    override fun visitAsmLabelInst(node: AsmLabelInst) {
+        printWriter.println(".L${node.identifier}:")
+    }
 }

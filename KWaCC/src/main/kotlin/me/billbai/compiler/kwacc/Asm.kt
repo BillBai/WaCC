@@ -142,6 +142,70 @@ object AsmCdqInst: AsmInstruction() {
     override fun <T> accept(visitor: AsmAstVisitor<T>): T = visitor.visitAsmCdqInst(this)
 }
 
+data class AsmCmpInst(
+    val operand1: AsmOperand,
+    val operand2: AsmOperand,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmCmpInst(this)
+    }
+}
+
+data class AsmJmpInst(
+    val target: String,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmJmpInst(this)
+    }
+}
+
+enum class AsmCondCode {
+    E,
+    NE,
+    G,
+    GE,
+    L,
+    LE;
+
+    fun formatAsmString(): String {
+        return when(this) {
+            AsmCondCode.E -> "e"
+            AsmCondCode.NE -> "ne"
+            AsmCondCode.G -> "g"
+            AsmCondCode.GE -> "ge"
+            AsmCondCode.L -> "l"
+            AsmCondCode.LE -> "le"
+        }
+    }
+}
+
+data class AsmJmpCCInst(
+    val condCode: AsmCondCode,
+    val target: String,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmJmpCCInst(this)
+    }
+}
+
+data class AsmSetCCInst(
+    val condCode: AsmCondCode,
+    val operand: AsmOperand,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmSetCCInst(this)
+    }
+}
+
+data class AsmLabelInst(
+    val identifier: String,
+): AsmInstruction() {
+    override fun <T> accept(visitor: AsmAstVisitor<T>): T {
+        return visitor.visitAsmLabelInst(this)
+    }
+}
+
+
 data class AsmInstList(
     val instList: List<AsmInstruction>,
 ): AsmInstruction() {

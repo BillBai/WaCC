@@ -133,4 +133,24 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     }
 
     override fun visitAsmCdqInst(node: AsmCdqInst): String = "Cdq"
+
+    override fun visitAsmCmpInst(node: AsmCmpInst): String {
+        return "cmpl ${node.operand1.accept(this)}, ${node.operand2.accept(this)}"
+    }
+
+    override fun visitAsmJmpInst(node: AsmJmpInst): String {
+        return "jmp .L${node.target}"
+    }
+
+    override fun visitAsmJmpCCInst(node: AsmJmpCCInst): String {
+        return "j${node.condCode.formatAsmString()} .L${node.target}"
+    }
+
+    override fun visitAsmSetCCInst(node: AsmSetCCInst): String {
+        return "set${node.condCode.formatAsmString()} ${node.operand.accept(this)}"
+    }
+
+    override fun visitAsmLabelInst(node: AsmLabelInst): String {
+        return ".L${node.identifier}"
+    }
 }
