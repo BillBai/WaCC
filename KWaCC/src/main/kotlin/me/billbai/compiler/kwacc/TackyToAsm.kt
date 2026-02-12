@@ -97,21 +97,44 @@ class TackyToAsm {
                     }
 
                     TackyAndBinaryOp -> TODO()
+                    TackyOrBinaryOp -> TODO()
+
                     TackyEqualBinaryOp -> TODO()
                     TackyGreaterBinaryOp -> TODO()
                     TackyGreaterOrEqualBinaryOp -> TODO()
                     TackyLessBinaryOp -> TODO()
                     TackyLessOrEqualBinaryOp -> TODO()
                     TackyNotEqualBinaryOp -> TODO()
-                    TackyOrBinaryOp -> TODO()
                 }
             }
 
-            is TackyCopyInst -> TODO()
-            is TackyJumpIfNotZeroInst -> TODO()
-            is TackyJumpIfZeroInst -> TODO()
-            is TackyJumpInst -> TODO()
-            is TackyLabelInst -> TODO()
+            is TackyCopyInst -> {
+                val src = convertTackyValueToAsmOperand(inst.src)
+                val dst = convertTackyValueToAsmOperand(inst.dst)
+                val moveInst = AsmMovInst(src, dst)
+                insts.add(moveInst)
+            }
+            is TackyJumpIfNotZeroInst -> {
+                val cond = convertTackyValueToAsmOperand(inst.condition)
+                val cmpInst = AsmCmpInst(AsmImmOperand(0), cond)
+                insts.add(cmpInst)
+                val jmpInst = AsmJmpCCInst(AsmCondCode.NE, inst.target)
+                insts.add(jmpInst)
+            }
+            is TackyJumpIfZeroInst -> {
+                val cond = convertTackyValueToAsmOperand(inst.condition)
+                val cmpInst = AsmCmpInst(AsmImmOperand(0), cond)
+                insts.add(cmpInst)
+                val jmpInst = AsmJmpCCInst(AsmCondCode.E, inst.target)
+                insts.add(jmpInst)
+            }
+            is TackyJumpInst -> {
+                val jmpInst = AsmJmpInst(inst.target)
+                insts.add(jmpInst)
+            }
+            is TackyLabelInst -> {
+                insts.add(AsmLabelInst(inst.identifier))
+            }
         }
         return insts
     }
