@@ -42,9 +42,7 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     }
 
     override fun visitAsmRetInst(node: AsmRetInst): String {
-        val builder = StringBuilder()
-        builder.append("Ret")
-        return builder.toString()
+        return "Ret"
     }
 
     override fun visitAsmImmOperand(node: AsmImmOperand): String {
@@ -79,11 +77,8 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
 
     override fun visitAsmUnaryInst(node: AsmUnaryInst): String {
         val builder = StringBuilder()
-        val opStr = when (node.op) {
-            is AsmNegUnaryOperator -> "Neg"
-            is AsmNotUnaryOperator -> "Not"
-        }
-        builder.append("Unary(op_type=${opStr}, operand=${node.operand.accept(this)})")
+        val opStr = node.op.accept(this)
+        builder.append("Unary(op=${opStr}, operand=${node.operand.accept(this)})")
         return builder.toString()
     }
 
@@ -120,11 +115,7 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     override fun visitAsmMultiplyBinaryOperator(node: AsmMultiplyBinaryOperator): String = "Mult"
 
     override fun visitAsmBinaryInst(node: AsmBinaryInst): String {
-        val opStr = when (node.op) {
-            is AsmAddBinaryOperator -> "Add"
-            is AsmSubBinaryOperator -> "Sub"
-            is AsmMultiplyBinaryOperator -> "Mult"
-        }
+        val opStr = node.op.accept(this)
         return "Binary(op=$opStr, src=${node.src.accept(this)}, dst=${node.dst.accept(this)})"
     }
 
@@ -135,22 +126,22 @@ class AsmAstPrettyPrinter: AsmAstVisitor<String> {
     override fun visitAsmCdqInst(node: AsmCdqInst): String = "Cdq"
 
     override fun visitAsmCmpInst(node: AsmCmpInst): String {
-        return "cmpl ${node.operand1.accept(this)}, ${node.operand2.accept(this)}"
+        return "Cmp(op1=${node.operand1.accept(this)}, op2=${node.operand2.accept(this)})"
     }
 
     override fun visitAsmJmpInst(node: AsmJmpInst): String {
-        return "jmp .L${node.target}"
+        return "Jmp(target=${node.target})"
     }
 
     override fun visitAsmJmpCCInst(node: AsmJmpCCInst): String {
-        return "j${node.condCode.formatAsmString()} .L${node.target}"
+        return "JmpCC(condCode=${node.condCode}, target=${node.target})"
     }
 
     override fun visitAsmSetCCInst(node: AsmSetCCInst): String {
-        return "set${node.condCode.formatAsmString()} ${node.operand.accept(this)}"
+        return "SetCC(condCode=${node.condCode}, operand=${node.operand.accept(this)})"
     }
 
     override fun visitAsmLabelInst(node: AsmLabelInst): String {
-        return ".L${node.identifier}"
+        return "Label(${node.identifier})"
     }
 }
