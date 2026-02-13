@@ -1,6 +1,7 @@
 package me.billbai.compiler.kwacc
 
 import java.io.PrintWriter
+import java.security.InvalidParameterException
 
 fun identifierName(identifier: String): String {
     val osName = System.getProperty("os.name").lowercase()
@@ -178,8 +179,24 @@ class AsmEmitter(
         printWriter.println("\tj${node.condCode.formatAsmString()} .L${node.target}")
     }
 
+    private fun formatByteOperand(operand: AsmRegisterOperand): String {
+        return when (operand.reg) {
+            AsmRegAX -> "%al"
+            AsmRegDX -> "%dl"
+            AsmRegR10 -> "%r10b"
+            AsmRegR11 -> "%r11b"
+        }
+    }
+
     override fun visitAsmSetCCInst(node: AsmSetCCInst) {
-        printWriter.println("\tset${node.condCode.formatAsmString()} ${formatOperand(node.operand)}")
+        val operandStr = when (node.operand) {
+            is AsmRegisterOperand -> formatByteOperand(node.operand)
+            else -> formatOperand(node.operand)
+        }
+
+        printWriter.println(
+            "\tset${node.condCode.formatAsmString()} $operandStr"
+        )
     }
 
     override fun visitAsmLabelInst(node: AsmLabelInst) {

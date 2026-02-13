@@ -36,6 +36,26 @@ class FixupInstructions {
                 return
             }
         }
+        if (inst is AsmCmpInst) {
+            val op1 = inst.operand1
+            val op2 = inst.operand2
+            if (op1 is AsmStackOperand && op2 is AsmStackOperand) {
+                val tmpRegOperand = AsmRegisterOperand(AsmRegR10)
+                val movOp1 = AsmMovInst(src=op1, dst=tmpRegOperand)
+                val newCmpInst = AsmCmpInst(tmpRegOperand, op2)
+                output.add(movOp1)
+                output.add(newCmpInst)
+                return
+            }
+            if (op2 is AsmImmOperand) {
+                val tmpRegOperand = AsmRegisterOperand(AsmRegR11)
+                val movOp2 = AsmMovInst(op2, tmpRegOperand)
+                val newCmpInst = AsmCmpInst(op1, tmpRegOperand)
+                output.add(movOp2)
+                output.add(newCmpInst)
+                return
+            }
+        }
         if (inst is AsmBinaryInst) {
             if (inst.op == AsmAddBinaryOperator || inst.op == AsmSubBinaryOperator) {
                 if (inst.src is AsmStackOperand && inst.dst is AsmStackOperand) {

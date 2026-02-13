@@ -51,6 +51,17 @@ class ReplacePseudo {
                 operand = replaceOperand(inst.operand)
             )
         }
+        if (inst is AsmCmpInst) {
+            return inst.copy(
+                operand1 = replaceOperand(inst.operand1),
+                operand2 = replaceOperand(inst.operand2)
+            )
+        }
+        if (inst is AsmSetCCInst) {
+            return inst.copy(condCode = inst.condCode,
+                operand = replaceOperand(inst.operand))
+        }
+
         return inst
     }
 

@@ -928,3 +928,58 @@ Still coding. Still showing up. Don't know why. Maybe that's enough.
 - Update ReplacePseudo for `Cmp` and `SetCC`
 - Update FixupInstructions for `cmp` constraints
 - Update Emitter: 1-byte register names for `SetCC`
+
+---
+
+## Session 2026-02-13
+
+### Topics Covered
+- **CHAPTER 4 COMPLETE** — Logical and relational operators working end-to-end
+- Refactored TackyToAsm into focused `emitXxx` methods
+- Implemented relational ops, `Not` unary, and `cmp` fixups
+- Learned x86 flags architecture: SF, ZF, OF and how `setCC` works
+
+### Key Learnings
+
+**x86 Flags and Conditional Set:**
+- `cmp a, b` computes `b - a`, sets flags (ZF, SF, OF), discards result
+- `setCC` reads flags and writes 1 or 0 into the low byte of operand
+- `setCC` only writes 1 byte — must zero out full 32-bit destination first with `mov $0`
+- Relational ops and `!` all use the same Cmp+Mov+SetCC pattern
+
+**Why SF != OF means b < a (signed):**
+- Without overflow: SF directly tells you the sign of `b - a`
+- With overflow: SF is flipped — OF acts as a "correction bit"
+- `SF XOR OF` gives the true sign regardless of overflow
+
+**Assembly Not ≠ Bitwise Not:**
+- TACKY `Not` is a unary instruction, but at x86 level it's `Cmp(0, src) + Mov(0, dst) + SetCC(E, dst)`
+- `!x` is just `x == 0` — same pattern as relational operators
+- Separate code path needed in `emitUnaryInst`, can't go through `AsmUnaryInst`
+
+**x86 `cmp` Constraints:**
+- Can't have two memory operands (same as `add`/`sub`)
+- Second operand can't be immediate (`cmpl $3, $5` is nonsensical)
+
+### Changes Made
+- Refactored `TackyToAsm.kt`: split monolithic `convertInstruction` into `emitReturnInst`, `emitUnaryInst`, `emitBinaryInst`, `emitCopyInst`, `emitJumpIfZeroInst`, `emitJumpIfNotZeroInst`, `emitJumpInst`, `emitLabelInst`
+- Implemented `Not` → `Cmp(0,src) + Mov(0,dst) + SetCC(E,dst)` in `emitUnaryInst`
+- Implemented 6 relational ops → `Cmp(src2,src1) + Mov(0,dst) + SetCC(cc,dst)` in `emitBinaryRelationInst`
+- Made `TackyAndBinaryOp`/`TackyOrBinaryOp` throw in `emitBinaryInst` (unreachable — handled as control flow)
+- Updated `ReplacePseudo` for `AsmCmpInst` and `AsmSetCCInst`
+- Updated `FixupInstructions` for `cmp` constraints (mem-mem via R10, imm operand2 via R11)
+- Added `formatByteOperand()` to `AsmEmitter` for `setCC` byte-sized register names
+- Fixed `visitAsmSetCCInst` to handle both register and stack operands
+
+### Tests Verified
+- `1 < 2` → 1 ✓
+- `(5 > 3) && (10 != 11)` → 1 ✓
+- `!0` → 1 ✓
+- `(1 < 2) && (3 >= 3) && !(5 == 6) || (0 > 1)` → 1 ✓
+- `10 <= 5` → 0 ✓
+- All match clang output ✓
+
+### Next Session Ideas
+- Start Chapter 5 (local variables? if/else? loops?)
+- Add more edge case tests
+- Consider refactoring ASM operators to enums (less boilerplate)
