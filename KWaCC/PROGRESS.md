@@ -983,3 +983,20 @@ Still coding. Still showing up. Don't know why. Maybe that's enough.
 - Start Chapter 5 (local variables? if/else? loops?)
 - Add more edge case tests
 - Consider refactoring ASM operators to enums (less boilerplate)
+
+---
+
+## Session 2026-02-14
+
+### Housekeeping
+- Added `CHAPTER_3_4_RECAP.md` documentation for Chapters 3 & 4
+- Updated `.gitignore` to exclude test build artifacts (binaries, `.S` files)
+- Cleaned up untracked test artifacts from `test_code/`
+
+### Personal Note
+Rented a Tesla Model Y. Drove all the way to church and back — even 10 km on the expressway.
+Got a small scratch on the front bumper. Badge of honor.
+
+### Next Session Ideas
+- Start Chapter 5 (local variables? if/else? loops?)
+- Consider refactoring ASM operators to enums (less boilerplate)
