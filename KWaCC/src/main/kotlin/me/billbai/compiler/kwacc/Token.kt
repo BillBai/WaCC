@@ -37,8 +37,9 @@ sealed class Token {
     object DoubleEqual: Token()
     object NotEqual: Token()
 
-    object EndOfFile: Token()
+    object Equal: Token()
 
+    object EndOfFile: Token()
 
     override fun toString(): String {
         return when (this) {
@@ -67,6 +68,7 @@ sealed class Token {
             is LogicalAnd -> "LogicalAnd"
             is LogicalOr -> "LogicalOr"
             is NotEqual -> "NotEqual"
+            is Equal -> "Equal"
         }
     }
 }

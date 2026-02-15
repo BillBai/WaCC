@@ -202,14 +202,7 @@ class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
                             advance()
                             TokenResult.Success(Token.DoubleEqual, curLoc)
                         } else {
-                            TokenResult.Error(
-                                LexerError(
-                                    "Unexpected character '$nextChar' after '$ch'",
-                                    curLine,
-                                    curColumn,
-                                    ch
-                                )
-                            )
+                            TokenResult.Success(Token.Equal, curLoc)
                         }
                     }
                     '&' -> {
