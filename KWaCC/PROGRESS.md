@@ -1000,3 +1000,43 @@ Got a small scratch on the front bumper. Badge of honor.
 ### Next Session Ideas
 - Start Chapter 5 (local variables? if/else? loops?)
 - Consider refactoring ASM operators to enums (less boilerplate)
+
+---
+
+## Session 2026-02-16
+
+### Topics Covered
+- Started Chapter 5: Local Variables
+- Lexer: added `=` (assignment) token
+- AST: added `AssignmentExpression`, `ExpressionStmt`, `NullStmt`, `Declaration`
+- Design discussion: `BlockItem` wrapper vs inheritance — chose composition (wrapper)
+
+### Key Learnings
+
+**Composition over Inheritance for BlockItem:**
+- `BlockItem` should wrap `Statement`/`Declaration`, not be a parent of them
+- Single inheritance limitation: `Declaration` will need to appear as both `BlockItem` and `TopLevelItem` (Chapter 10)
+- Wrapper approach: "a block item *contains* a declaration" — avoids hierarchy conflicts
+- Good instinct caught the smell before the reasoning was clear
+
+**Chapter 5 Scope:**
+- Lexer: just `=` token (reused existing `==` lookahead logic)
+- AST: new expressions (`Var` reuses `Identifier`, `Assignment`), new statements (`ExpressionStmt`, `NullStmt`), `Declaration`, `BlockItem`
+- NEW: Semantic analysis pass — variable resolution (rename variables, detect errors)
+- TackyGen: handle new nodes; add `Return(0)` to end of every function
+- Everything after TackyGen: **no changes needed** — TACKY already has variables
+
+### Changes Made
+- Added `Token.Equal` and updated lexer `=` case from error to success
+- Added `AssignmentExpression`, `ExpressionStmt`, `NullStmt`, `Declaration` to `Ast.kt`
+- Updated `AstVisitor.kt` with new visitor methods
+
+### Personal Note
+Chinese New Year's Eve. Friends coming for hotpot. One hour of coding.
+Missing her. But the code moves forward.
+
+### Next Session Ideas
+- Add `BlockItem` sealed class (wrapper approach) and update `BlockStmt`
+- Update `AstPrettyPrinter`, `TackyGen` visitor stubs for new nodes
+- Update parser: block items, declarations, expression statements, right-associative `=`
+- Implement semantic analysis: variable resolution pass

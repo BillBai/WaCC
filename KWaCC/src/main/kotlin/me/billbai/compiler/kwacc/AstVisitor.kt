@@ -14,6 +14,7 @@ interface AstVisitor<T> {
     fun visitNegateOperator(node: NegateOperator): T
     fun visitUnary(node: UnaryExpression): T
     fun visitBinaryExpression(node: BinaryExpression): T
+    fun visitAssignmentExpression(node: AssignmentExpression): T
     fun visitAddOperator(node: AddOperator): T
     fun visitSubOperator(node: SubOperator): T
     fun visitMultiplyOperator(node: MultiplyOperator): T
@@ -28,5 +29,7 @@ interface AstVisitor<T> {
     fun visitGreaterThanOperator(node: GreaterOperator): T
     fun visitLessOrEqualThanOperator(node: LessOrEqualOperator): T
     fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): T
-
+    fun visitExpressionStmt(node: ExpressionStmt): T
+    fun visitNullStmt(node: NullStmt): T
+    fun visitDeclaration(node: Declaration): T
 }

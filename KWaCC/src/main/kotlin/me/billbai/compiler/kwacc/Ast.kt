@@ -127,6 +127,36 @@ data class BinaryExpression(
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitBinaryExpression(this)
 }
 
+data class AssignmentExpression(
+    val lhs: Expression,
+    val rhs: Expression,
+): Expression(null) {
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitAssignmentExpression(this)
+}
+
+data class ExpressionStmt(
+    val expression: Expression
+): Statement() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitExpressionStmt(this)
+    }
+}
+
+object NullStmt: Statement() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitNullStmt(this)
+    }
+
+}
+
+data class Declaration(val name: String, val initializer: Expression?): AstNode() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitDeclaration(this)
+    }
+}
+
+
+
 sealed class BinaryOperator() : AstNode() {}
 
 object AddOperator: BinaryOperator() {
