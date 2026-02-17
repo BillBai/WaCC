@@ -32,4 +32,6 @@ interface AstVisitor<T> {
     fun visitExpressionStmt(node: ExpressionStmt): T
     fun visitNullStmt(node: NullStmt): T
     fun visitDeclaration(node: Declaration): T
+    fun visitBlockItemStatement(node: BlockItemStatement): T
+    fun visitBlockItemDeclaration(node: BlockItemDeclaration): T
 }

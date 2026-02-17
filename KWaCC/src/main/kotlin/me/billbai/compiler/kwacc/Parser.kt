@@ -129,12 +129,12 @@ class Parser(
         }
         advance()
 
-        val statements = mutableListOf<Statement>()
+        val blockItems = mutableListOf<BlockItem>()
 
         while ((peek() !is Token.CloseBrace) && !isAtEnd()) {
             val stmt = parseStatement()
             if (stmt != null) {
-                statements.add(stmt)
+                blockItems.add(BlockItemStatement(stmt))
             } else {
                 break
             }
@@ -146,7 +146,7 @@ class Parser(
         }
         advance()
 
-        return BlockStmt(statements)
+        return BlockStmt(blockItems)
     }
 
     private fun parseStatement(): Statement? {

@@ -46,7 +46,7 @@ data class Parameter(
 sealed class Statement : AstNode()
 
 data class BlockStmt(
-    val statements: List<Statement>,
+    val blockItems: List<BlockItem>,
 ) : Statement() {
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitBlockStmt(this)
 }
@@ -155,6 +155,24 @@ data class Declaration(val name: String, val initializer: Expression?): AstNode(
     }
 }
 
+sealed class BlockItem : AstNode() {}
+
+data class BlockItemStatement(
+    val statement: Statement
+): BlockItem() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitBlockItemStatement(this)
+    }
+}
+
+
+data class BlockItemDeclaration(
+    val declaration: Declaration
+): BlockItem() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitBlockItemDeclaration(this)
+    }
+}
 
 
 sealed class BinaryOperator() : AstNode() {}

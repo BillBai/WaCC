@@ -59,8 +59,8 @@ class TackyGen() : AstVisitor<TackyNode> {
         // no one cares about statement's return value
         // just like no one cares about me. :(
         var last : TackyNode = TackyConstantVal(0)
-        for (statement in node.statements) {
-            last = statement.accept(this)
+        for (blockItem in node.blockItems) {
+            last = blockItem.accept(this)
         }
         return last
     }
@@ -232,6 +232,10 @@ class TackyGen() : AstVisitor<TackyNode> {
         return dst
     }
 
+    override fun visitAssignmentExpression(node: AssignmentExpression): TackyNode {
+        TODO("Not yet implemented")
+    }
+
     override fun visitAddOperator(node: AddOperator): TackyNode {
         TODO("Not yet implemented")
     }
@@ -286,5 +290,25 @@ class TackyGen() : AstVisitor<TackyNode> {
 
     override fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): TackyNode {
         TODO("Not yet implemented")
+    }
+
+    override fun visitExpressionStmt(node: ExpressionStmt): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitNullStmt(node: NullStmt): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitDeclaration(node: Declaration): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitBlockItemStatement(node: BlockItemStatement): TackyNode {
+        return node.statement.accept(this)
+    }
+
+    override fun visitBlockItemDeclaration(node: BlockItemDeclaration): TackyNode {
+        return node.declaration.accept(this)
     }
 }

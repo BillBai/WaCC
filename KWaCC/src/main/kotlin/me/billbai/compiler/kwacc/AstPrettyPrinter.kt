@@ -47,7 +47,7 @@ class AstPrettyPrinter : AstVisitor<String> {
         "Parameter(type=${node.type.accept(this)}, name=\"${node.name}\")"
 
     override fun visitBlockStmt(node: BlockStmt): String {
-        if (node.statements.isEmpty()) {
+        if (node.blockItems.isEmpty()) {
             return "BlockStmt(statements=[])"
         }
         val result = StringBuilder()
@@ -55,7 +55,7 @@ class AstPrettyPrinter : AstVisitor<String> {
         result.append(withIndent { indent ->
             "${indent}statements=[\n" +
                     withIndent { indent ->
-                        node.statements.joinToString(",\n") { "${indent}${it.accept(this)}" }
+                        node.blockItems.joinToString(",\n") { "${indent}${it.accept(this)}" }
                     } +
                     "\n${indent}]"
         })
@@ -88,6 +88,10 @@ class AstPrettyPrinter : AstVisitor<String> {
 
     override fun visitBinaryExpression(node: BinaryExpression): String {
         return "BinaryExpression(op=${node.binaryOperator.accept(this)}, lhs=${node.lhs.accept(this)}, rhs=${node.rhs.accept(this)})"
+    }
+
+    override fun visitAssignmentExpression(node: AssignmentExpression): String {
+        return "Assignment(lhs=${node.lhs.accept(this)}, rhs=${node.rhs.accept(this)}"
     }
 
     override fun visitAddOperator(node: AddOperator): String = "Add(+)"
@@ -130,5 +134,25 @@ class AstPrettyPrinter : AstVisitor<String> {
 
     override fun visitGreaterOrEqualOperator(node: GreaterOrEqualOperator): String {
         return "GEq(>=)"
+    }
+
+    override fun visitExpressionStmt(node: ExpressionStmt): String {
+        return "ExpressionStmt(expr=${node.expression.accept(this)})"
+    }
+
+    override fun visitNullStmt(node: NullStmt): String {
+        return "NullStmt"
+    }
+
+    override fun visitDeclaration(node: Declaration): String {
+        return "Declaration(name=${node.name}, init=${node.initializer?.accept(this)})"
+    }
+
+    override fun visitBlockItemStatement(node: BlockItemStatement): String {
+        return "BlockItemStmt(stmt=${node.statement.accept(this)})"
+    }
+
+    override fun visitBlockItemDeclaration(node: BlockItemDeclaration): String {
+        return "BlockItemDecl(decl=${node.declaration.accept(this)})"
     }
 }

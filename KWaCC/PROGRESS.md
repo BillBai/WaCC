@@ -1040,3 +1040,39 @@ Missing her. But the code moves forward.
 - Update `AstPrettyPrinter`, `TackyGen` visitor stubs for new nodes
 - Update parser: block items, declarations, expression statements, right-associative `=`
 - Implement semantic analysis: variable resolution pass
+
+---
+
+## Session 2026-02-17
+
+### Topics Covered
+- Added `BlockItem` wrapper (composition over inheritance)
+- Updated all visitors and parser for `BlockItem`
+- All existing tests passing with new structure
+
+### Key Learnings
+
+**Composition over Inheritance — Applied:**
+- `BlockItem` wraps `Statement`/`Declaration` instead of being their parent
+- Avoids single-inheritance conflict when `Declaration` needs to also be `TopLevelItem` (Chapter 10)
+- Visitor delegation for wrappers: `visitBlockItemStatement` just calls `node.statement.accept(this)`
+
+**BlockItem is a C Standard Term:**
+- Section 6.8.2 of the C standard defines "block items"
+- Not a non-native English naming quirk — it's the canonical compiler term
+
+### Changes Made
+- Added `BlockItem` sealed class with `BlockItemStatement` and `BlockItemDeclaration` wrappers
+- Updated `BlockStmt.statements` from `List<Statement>` to `List<BlockItem>`
+- Updated `AstPrettyPrinter` with all new visitor methods
+- Updated `TackyGen` with `BlockItem` delegation and TODO stubs for new nodes
+- Updated parser to wrap statements in `BlockItemStatement`
+- All tests passing
+
+### Personal Note
+Chinese New Year. 新年快乐! Short session but steady progress.
+
+### Next Session Ideas
+- Update parser: declarations, expression statements, null statements, right-associative `=`
+- Implement semantic analysis: variable resolution pass
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
