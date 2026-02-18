@@ -132,11 +132,21 @@ class Parser(
         val blockItems = mutableListOf<BlockItem>()
 
         while ((peek() !is Token.CloseBrace) && !isAtEnd()) {
-            val stmt = parseStatement()
-            if (stmt != null) {
-                blockItems.add(BlockItemStatement(stmt))
+            val token = peek()
+            if (token.isKeywordToken(Token.KeywordType.INT)) {
+                val decl = parseDeclaration()
+                if (decl != null) {
+                    blockItems.add(BlockItemDeclaration(decl))
+                } else {
+                    break
+                }
             } else {
-                break
+                val stmt = parseStatement()
+                if (stmt != null) {
+                    blockItems.add(BlockItemStatement(stmt))
+                } else {
+                    break
+                }
             }
         }
 
@@ -151,12 +161,78 @@ class Parser(
 
     private fun parseStatement(): Statement? {
         val token = peek()
+        if (token is Token.Semicolon) {
+            advance()
+            return NullStmt
+        }
+
         if (token is Token.Keyword && token.keywordType == Token.KeywordType.RETURN) {
             return parseReturnStatement()
         }
 
-        addError("Unknown statement type")
+        return parseExpressionStmt()
+    }
+
+    private fun parseExpressionStmt(): ExpressionStmt? {
+        val expr = parseExpression(0)
+        if (expr == null) {
+            addError("Expect a expression for ExpressionStmt")
+            return null
+        }
+        val nextToken = peek()
+        if (nextToken is Token.Semicolon) {
+            advance()
+            return ExpressionStmt(expr)
+        }
+
+        addError("A ';' is expected for expression statement.")
         return null
+    }
+
+    private fun parseDeclaration(): Declaration? {
+        // parse type
+        val typeToken = peek()
+        if (!typeToken.isKeywordToken(Token.KeywordType.INT)) {
+            addError("Unsupported declaration type: typeToken")
+            return null
+        }
+        advance()
+
+        // parse identifier
+        val identifierToken = peek()
+        if (identifierToken !is Token.Identifier) {
+            addError("An identifier is expected. got $identifierToken")
+            return  null
+        }
+        advance()
+
+        val optionalSemicolon = peek()
+        if (optionalSemicolon == Token.Semicolon) {
+            // consume the semicolon and return an uninitialized declaration
+            advance()
+            return Declaration(identifierToken.value, null)
+        }
+
+        val assignToken = peek()
+        if (assignToken != Token.Equal) {
+            addError("An Equal token is expected. got $assignToken")
+            return null
+        }
+        advance()
+
+        val initializer = parseExpression(0)
+        if (initializer == null) {
+            addError("An expression is expected.")
+            return null
+        }
+
+        val finalSemicolonToken = peek()
+        if (finalSemicolonToken != Token.Semicolon) {
+            addError("A ';' is expected. got $finalSemicolonToken")
+            return null
+        }
+        advance()
+        return Declaration(identifierToken.value, initializer)
     }
 
     private fun parseReturnStatement(): ReturnStmt? {
@@ -265,6 +341,7 @@ class Parser(
             Token.GreaterOrEqual,
             Token.LessThan,
             Token.LessOrEqual,
+            Token.Equal,
         )
         return binaryOperators.contains(token)
     }
@@ -289,6 +366,8 @@ class Parser(
             Token.LogicalAnd to 10,
 
             Token.LogicalOr to 5,
+
+            Token.Equal to 1,
         )
         return binaryOpPrecedenceMap[token] ?: 0
     }
@@ -326,14 +405,24 @@ class Parser(
         var left = parseFactor() ?: return null
         var nextToken = peek()
         while (isBinaryOperator(nextToken) && (operatorPrecedence(nextToken) >= minPrecedence)) {
-            val binaryOp = parseBinaryOperator(nextToken)
-            check(binaryOp != null)
-            val right = parseExpression(operatorPrecedence(nextToken) + 1)
-            if (right == null) {
-                addError("malformed right hand side")
-                return null
+            if (nextToken == Token.Equal) {
+                advance()
+                val right = parseExpression(operatorPrecedence(nextToken))
+                if (right == null) {
+                    addError("malformed right hand side")
+                    return null
+                }
+                left = AssignmentExpression(left, right)
+            } else {
+                val binaryOp = parseBinaryOperator(nextToken)
+                check(binaryOp != null)
+                val right = parseExpression(operatorPrecedence(nextToken) + 1)
+                if (right == null) {
+                    addError("malformed right hand side")
+                    return null
+                }
+                left = BinaryExpression(binaryOp, left, right)
             }
-            left = BinaryExpression(binaryOp, left, right)
             nextToken = peek()
         }
         return left

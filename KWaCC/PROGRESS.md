@@ -1076,3 +1076,39 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Update parser: declarations, expression statements, null statements, right-associative `=`
 - Implement semantic analysis: variable resolution pass
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+
+---
+
+## Session 2026-02-18
+
+### Topics Covered
+- Completed parser updates for Chapter 5
+- All five parser changes working: null stmt, expression stmt, declarations, block items, right-associative `=`
+
+### Key Learnings
+
+**Right-Associative Precedence Climbing:**
+- Left-associative: recurse with `precedence + 1` (same-level operator can't steal operand)
+- Right-associative: recurse with `precedence` (same-level operator CAN steal operand)
+- `a = b = c` → `Assignment(a, Assignment(b, c))` — the `+ 1` is the only difference
+
+**Optional Grammar Elements:**
+- Declaration initializer is optional: peek for `;` (no init) vs `=` (has init)
+- Bug caught: originally required `=` before checking for `;`, making `int b;` fail
+- Bug caught: `NullStmt` must consume the `;` or the block item loop spins forever
+
+### Changes Made
+- Added `parseDeclaration()` with optional initializer
+- Added `parseExpressionStmt()`
+- Added `NullStmt` handling in `parseStatement()`
+- Updated block item loop to dispatch on `int` keyword → declaration vs statement
+- Added `Token.Equal` to precedence table (precedence 1)
+- Implemented right-associative `=` in `parseExpression()` with `AssignmentExpression`
+- Added `Token.isKeywordToken()` helper
+- Smoke tested: declarations, assignments, chained `a = b = c` all parse correctly
+
+### Next Session Ideas
+- Implement semantic analysis: variable resolution pass (new compiler stage!)
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+- Add `Return(0)` at end of every function body
+- Add `--validate` CLI option

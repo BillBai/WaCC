@@ -71,6 +71,10 @@ sealed class Token {
             is Equal -> "Equal"
         }
     }
+
+    fun isKeywordToken(keywordType: KeywordType): Boolean {
+        return (this is Token.Keyword) && (this.keywordType == keywordType)
+    }
 }
 
 data class TokenStream(
