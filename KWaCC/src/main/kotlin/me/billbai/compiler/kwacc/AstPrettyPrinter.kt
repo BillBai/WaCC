@@ -74,8 +74,8 @@ class AstPrettyPrinter : AstVisitor<String> {
     override fun visitIntConstant(node: IntConstant): String = 
         "IntConstant(value=\"${node.value}\")"
 
-    override fun visitIdentifier(node: Identifier): String = 
-        "Identifier(name=\"${node.name}\", type=${node.type?.accept(this)})"
+    override fun visitVar(node: Var): String =
+        "Var(name=\"${node.name}\", type=${node.type?.accept(this)})"
 
     override fun visitComplementOperator(node: ComplementOperator): String =
         "ComplementOp(~)"

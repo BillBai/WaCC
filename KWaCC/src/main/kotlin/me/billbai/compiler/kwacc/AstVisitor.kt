@@ -9,7 +9,7 @@ interface AstVisitor<T> {
     fun visitBlockStmt(node: BlockStmt): T
     fun visitReturnStmt(node: ReturnStmt): T
     fun visitIntConstant(node: IntConstant): T
-    fun visitIdentifier(node: Identifier): T
+    fun visitVar(node: Var): T
     fun visitComplementOperator(node: ComplementOperator): T
     fun visitNegateOperator(node: NegateOperator): T
     fun visitUnary(node: UnaryExpression): T

@@ -78,7 +78,7 @@ class TackyGen() : AstVisitor<TackyNode> {
         return TackyConstantVal(node.value.toInt())
     }
 
-    override fun visitIdentifier(node: Identifier): TackyNode {
+    override fun visitVar(node: Var): TackyNode {
         TODO("Not yet implemented")
     }
 

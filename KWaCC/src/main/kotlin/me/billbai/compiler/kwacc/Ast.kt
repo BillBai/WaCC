@@ -71,14 +71,14 @@ data class IntConstant(
     override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIntConstant(this)
 }
 
-data class Identifier(
+data class Var(
     val name: String,
 ) : Expression(null) {
     constructor(name: String, type: Type?) : this(name) {
         this.type = type
     }
 
-    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitIdentifier(this)
+    override fun <T> accept(visitor: AstVisitor<T>): T = visitor.visitVar(this)
 }
 
 data class UnaryExpression(

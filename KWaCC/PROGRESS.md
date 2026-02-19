@@ -1112,3 +1112,31 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
 - Add `Return(0)` at end of every function body
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-19
+
+### Topics Covered
+- Renamed `Identifier` AST node to `Var` for semantic clarity
+- Discussed VariableResolver design
+
+### Key Learnings
+
+**Naming Should Match Abstraction Level:**
+- Lexer sees "identifiers" (raw names) — token-level concept
+- AST sees "variables" — semantic concept
+- `Var` says exactly what the node means: a variable reference in an expression
+- As compiler grows (function calls, type names), precise naming prevents confusion
+
+### Changes Made
+- Renamed `Identifier` → `Var` in `Ast.kt`
+- Renamed `visitIdentifier` → `visitVar` across `AstVisitor`, `AstPrettyPrinter`, `TackyGen`
+- Updated pretty printer output to say `Var(...)` instead of `Identifier(...)`
+- Updated parser to construct `Var` nodes
+
+### Next Session Ideas
+- Implement `VariableResolver.kt` — the variable resolution pass
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+- Add `Return(0)` at end of every function body
+- Add `--validate` CLI option

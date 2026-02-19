@@ -288,7 +288,7 @@ class Parser(
         if (token is Token.Identifier) {
             advance()
             // Type will be determined during semantic analysis
-            return Identifier(token.value, IntType)
+            return Var(token.value, IntType)
         }
         if (token is Token.Minus || token is Token.Tilde || token is Token.Bang) {
             val operator = parseUnaryOperator()
