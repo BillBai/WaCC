@@ -1140,3 +1140,33 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
 - Add `Return(0)` at end of every function body
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-21
+
+### Topics Covered
+- Started `VariableResolver.kt` — first semantic analysis pass
+- Discussed error handling: throw vs collect, checked vs unchecked exceptions
+
+### Key Learnings
+
+**Kotlin Has No Checked Exceptions:**
+- Java forces `throws` in signatures; Kotlin dropped this entirely
+- Deliberate design: checked exceptions cause more boilerplate than bugs they prevent
+- For signaling failure: use `Result<T>` or sealed class returns, not checked exceptions
+
+**Error Handling Strategy:**
+- Throwing `SemanticError` is simplest — stop at first error
+- `Result<T>` / error collection is for when you want to report multiple errors
+- Start simple (throw), upgrade later if needed
+
+### Changes Made
+- Created `VariableResolver.kt` with `SemanticError`, `makeUnique`, `resolveDeclaration`
+- Fixed typo in Parser: "adter" → "after"
+
+### Next Session Ideas
+- Implement remaining VariableResolver methods: `resolveExpression`, `resolveStatement`, `resolveBlockItem`, `resolveProgram`
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+- Add `Return(0)` at end of every function body
+- Add `--validate` CLI option

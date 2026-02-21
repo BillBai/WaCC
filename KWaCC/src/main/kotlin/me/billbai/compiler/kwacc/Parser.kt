@@ -298,7 +298,7 @@ class Parser(
             }
             val exp = parseFactor()
             if (exp == null) {
-                addError("Expecting exp adter unary operator")
+                addError("Expecting an exp after unary operator")
                 return null
             }
             return UnaryExpression(operator, exp)
