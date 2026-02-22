@@ -1,12 +1,8 @@
 package me.billbai.compiler.kwacc
 
 class TackyGen() : AstVisitor<TackyNode> {
-    private var tmpCounter: Int = 0
-
     private fun makeTmp(): String {
-        val tmp = "tmp.${tmpCounter}"
-        tmpCounter += 1
-        return tmp
+        return UniqueNameGenerator.genUniqueName("tmp")
     }
 
     private var labelCounter: Int = 0

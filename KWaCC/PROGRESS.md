@@ -1170,3 +1170,33 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
 - Add `Return(0)` at end of every function body
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-22
+
+### Topics Covered
+- Created `UniqueNameGenerator` singleton for shared counter across passes
+- Implemented `resolveExpression` and `resolveStatement` in VariableResolver
+- Fixed assignment bug: lhs must be resolved (renamed) too
+
+### Key Learnings
+
+**Shared Counter via Singleton:**
+- `UniqueNameGenerator` as Kotlin `object` — shared between `VariableResolver` and `TackyGen`
+- Both `makeUnique(name)` and `makeTmp()` now delegate to one counter
+- Guarantees no name collisions between semantic analysis and TACKY generation
+
+### Changes Made
+- Created `UniqueNameGenerator.kt` — singleton with `genUniqueName(prefix)`
+- Updated `TackyGen.makeTmp()` to delegate to `UniqueNameGenerator`
+- Implemented `resolveExpression` — handles `Var`, `AssignmentExpression`, `BinaryExpression`, `UnaryExpression`, `IntConstant`
+- Implemented `resolveStatement` — handles `ReturnStmt`, `ExpressionStmt`, `NullStmt` (BlockStmt TODO)
+- Fixed assignment lhs resolution bug
+
+### Next Session Ideas
+- Finish VariableResolver: `resolveBlockItem`, `BlockStmt`, `resolveProgram`, `resolveFunctionDef`
+- Remove dead `tmpCounter` from TackyGen
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+- Add `Return(0)` at end of every function body
+- Add `--validate` CLI option
