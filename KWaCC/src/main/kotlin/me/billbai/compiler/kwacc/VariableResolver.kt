@@ -60,16 +60,53 @@ class VariableResolver(
         }
     }
 
+    fun resolveBlockStmt(blockStmt: BlockStmt): BlockStmt {
+        val resolvedBlockItems = mutableListOf<BlockItem>()
+        for (blockItem in blockStmt.blockItems) {
+            when (blockItem) {
+                is BlockItemStatement -> {
+                    val resolved = resolveStatement(blockItem.statement)
+                    resolvedBlockItems.add(BlockItemStatement(resolved))
+                }
+                is BlockItemDeclaration -> {
+                    val resolved = resolveDeclaration(blockItem.declaration)
+                    resolvedBlockItems.add(BlockItemDeclaration(resolved))
+                }
+            }
+        }
+        return BlockStmt(resolvedBlockItems)
+    }
+
     fun resolveStatement(statement: Statement): Statement {
         return when (statement) {
             is ReturnStmt -> ReturnStmt(resolveExpression(statement.expression))
-            is BlockStmt -> {
-                TODO()
-
-            }
+            is BlockStmt -> resolveBlockStmt(statement)
             is ExpressionStmt -> ExpressionStmt(resolveExpression(statement.expression)!!)
             NullStmt -> statement
         }
+    }
+
+    fun resolveProgram(program: Program): Program {
+        val resolvedTopLevelItems = mutableListOf<TopLevelItem>()
+        for (topLevelItem in program.items) {
+            when (topLevelItem) {
+                is FunctionDefinition -> {
+                    resolvedTopLevelItems.add(resolveFunctionDef(topLevelItem))
+                }
+            }
+        }
+
+        return Program(resolvedTopLevelItems)
+    }
+
+    fun resolveFunctionDef(functionDef: FunctionDefinition): FunctionDefinition {
+        val resolvedBody = resolveBlockStmt(functionDef.body)
+        return functionDef.copy(
+            returnType = functionDef.returnType,
+            name = functionDef.name,
+            parameters = functionDef.parameters,
+            body = resolvedBody
+        )
     }
 
 }
