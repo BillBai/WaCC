@@ -1200,3 +1200,22 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
 - Add `Return(0)` at end of every function body
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-24
+
+### Topics Covered
+- Completed VariableResolver: `resolveBlockStmt`, `resolveProgram`, `resolveFunctionDef`
+- Cleaned up dead `tmpCounter` from TackyGen (already delegated to UniqueNameGenerator)
+
+### Changes Made
+- Implemented `resolveBlockStmt` — iterates block items, dispatches to statement/declaration resolvers
+- Implemented `resolveProgram` — walks top-level items
+- Implemented `resolveFunctionDef` — resolves function body via `data class .copy()`
+- Removed dead code from TackyGen
+
+### Next Session Ideas
+- Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
+- Add `Return(0)` at end of every function body
+- Add `--validate` CLI option
