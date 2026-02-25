@@ -5,6 +5,8 @@ class TackyGen() : AstVisitor<TackyNode> {
         return UniqueNameGenerator.genUniqueName("tmp")
     }
 
+    private val variableMap: MutableMap<String, TackyVariableVal> = mutableMapOf()
+
     private var labelCounter: Int = 0
 
     private fun makeLabel(prefix: String): String {
@@ -75,7 +77,7 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitVar(node: Var): TackyNode {
-        TODO("Not yet implemented")
+        return TackyVariableVal(node.name)
     }
 
     override fun visitComplementOperator(node: ComplementOperator): TackyNode {
@@ -229,7 +231,8 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitAssignmentExpression(node: AssignmentExpression): TackyNode {
-        TODO("Not yet implemented")
+        val rhsValue = node.rhs.accept(this)
+        TODO("WIP — need to emit Copy and return the value")
     }
 
     override fun visitAddOperator(node: AddOperator): TackyNode {
@@ -289,11 +292,12 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitExpressionStmt(node: ExpressionStmt): TackyNode {
-        TODO("Not yet implemented")
+        node.expression.accept(this)
+        return TackyConstantVal(0)
     }
 
     override fun visitNullStmt(node: NullStmt): TackyNode {
-        TODO("Not yet implemented")
+        return TackyConstantVal(0)
     }
 
     override fun visitDeclaration(node: Declaration): TackyNode {

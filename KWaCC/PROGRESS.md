@@ -1219,3 +1219,34 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `Var`, `Assignment`, `Declaration`, expression statements
 - Add `Return(0)` at end of every function body
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-25
+
+### Topics Covered
+- Started TackyGen for Chapter 5 nodes
+- Discussed TackyNoOpInst vs dummy return values — chose not to expand IR for type system problems
+
+### Key Learnings
+
+**Don't Expand IR for Type System Problems:**
+- Created `TackyNoOpInst` for statement return values, then removed it
+- Every IR type is a contract — all downstream passes must handle it
+- If a type never appears in the instruction stream, it's dead weight
+- Use existing dummy values (`TackyConstantVal(0)`) instead
+
+### Changes Made
+- Implemented `visitVar` — maps `Var.name` directly to `TackyVariableVal`
+- Implemented `visitExpressionStmt` — evaluates expression for side effects, discards result
+- Implemented `visitNullStmt` — returns dummy value, emits nothing
+- Started `visitAssignmentExpression` — WIP (rhs evaluation done, Copy + return TODO)
+- Added `variableMap` field to TackyGen (for upcoming declaration support)
+- Removed `TackyNoOpInst` from Tacky.kt
+
+### Next Session Ideas
+- Finish `visitAssignmentExpression` — emit `TackyCopyInst`, return the value
+- Implement `visitDeclaration` — handle `int x;` vs `int x = 5;`
+- Add `Return(0)` at end of every function body
+- Wire VariableResolver into CompilerDriver pipeline
+- Add `--validate` CLI option
