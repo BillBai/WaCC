@@ -77,6 +77,7 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitVar(node: Var): TackyNode {
+        // TODO(billbai) return the variable val from variableMap
         return TackyVariableVal(node.name)
     }
 
@@ -232,7 +233,11 @@ class TackyGen() : AstVisitor<TackyNode> {
 
     override fun visitAssignmentExpression(node: AssignmentExpression): TackyNode {
         val rhsValue = node.rhs.accept(this)
-        TODO("WIP — need to emit Copy and return the value")
+        val lhsValue = node.lhs.accept(this)
+        check(rhsValue is TackyVal)
+        check(lhsValue is TackyVal)
+        currentInstList.add(TackyCopyInst(rhsValue, lhsValue))
+        return rhsValue
     }
 
     override fun visitAddOperator(node: AddOperator): TackyNode {
@@ -301,7 +306,14 @@ class TackyGen() : AstVisitor<TackyNode> {
     }
 
     override fun visitDeclaration(node: Declaration): TackyNode {
-        TODO("Not yet implemented")
+        // TODO(billbai) check variable is already defined.
+        val variable = TackyVariableVal(node.name)
+        if (node.initializer != null) {
+            val initializerValue = node.initializer.accept(this)
+            check(initializerValue is TackyVal)
+            currentInstList.add(TackyCopyInst(initializerValue, variable))
+        }
+        return TackyConstantVal(0)
     }
 
     override fun visitBlockItemStatement(node: BlockItemStatement): TackyNode {
