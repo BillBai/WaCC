@@ -34,6 +34,7 @@ class TackyGen() : AstVisitor<TackyNode> {
     override fun visitFunctionDefinition(node: FunctionDefinition): TackyNode {
         check(currentInstList.isEmpty())
         val body = node.body.accept(this)
+        currentInstList.add(TackyReturnInst(TackyConstantVal(0)))
         val tackyFunction = TackyFunction(node.name,
             currentInstList.toList())
         currentInstList.clear()
