@@ -2,9 +2,7 @@ package me.billbai.compiler.kwacc
 
 class SemanticError(message: String): Exception(message)
 
-class VariableResolver(
-    val ast: AstNode,
-) {
+class VariableResolver {
     private val variableMap: MutableMap<String, String> = mutableMapOf()
 
     private fun makeUnique(name: String): String {

@@ -12,6 +12,7 @@ class CompilerDriver {
         LEX,
         PARSE,
         CODEGEN,
+        VALIDATE,
     }
 
     private var mode: Mode = Mode.DEFAULT
@@ -60,6 +61,16 @@ class CompilerDriver {
         return parseResult
     }
 
+    private fun performSemanticAnalysis(ast: Program): Program? {
+        try {
+            val resolvedAst = VariableResolver().resolveProgram(ast)
+            return resolvedAst
+        } catch (e: SemanticError) {
+            println("Semantic error: ${e.message}")
+            return null
+        }
+    }
+
     fun runLexMode(inputFilePath: String): Int {
         println("Running in Lex mode...")
         if (!validateFile(inputFilePath)) return 1
@@ -105,8 +116,13 @@ class CompilerDriver {
                 return 1
             }
 
+            val resolvedAst = performSemanticAnalysis(ast)
+            if (resolvedAst == null) {
+                println("Error: Semantic Analysis returned null AST")
+                return 1
+            }
             val tackyGen = TackyGen()
-            val tackyIR = ast.accept(tackyGen)
+            val tackyIR = resolvedAst.accept(tackyGen)
             val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
             val (asmAfterPseudo, stackSize) = ReplacePseudo().replace(asmAst)
             val finalAsmAst = FixupInstructions().fixup(asmAfterPseudo, stackSize)
@@ -123,6 +139,30 @@ class CompilerDriver {
                 println("=== ASM:")
                 println(stringWriter.toString())
             }
+        }
+        return 0
+    }
+
+    fun runValidateMode(inputFilePath: String): Int {
+        println("Running in Validate mode...")
+        if (!validateFile(inputFilePath)) return 1
+
+        File(inputFilePath).inputStream().use { inputStream ->
+            val lexResult = performLexing(inputStream) ?: return 1
+            val parseResult = performParsing(lexResult.tokenStream) ?: return 1
+
+            val ast = parseResult.ast
+            if (ast == null) {
+                println("Error: Parser returned null AST")
+                return 1
+            }
+
+            val resolvedAst = performSemanticAnalysis(ast)
+            if (resolvedAst == null) {
+                println("Error: Semantic Analysis returned null AST")
+                return 1
+            }
+
         }
         return 0
     }
@@ -157,8 +197,14 @@ class CompilerDriver {
                 return 1
             }
 
+            val resolvedAst = performSemanticAnalysis(ast)
+            if (resolvedAst == null) {
+                println("Error: Semantic Analysis returned null AST")
+                return 1
+            }
+            
             val tackyGen = TackyGen()
-            val tackyIR = ast.accept(tackyGen)
+            val tackyIR = resolvedAst.accept(tackyGen)
             val asmAst = TackyToAsm().convert(tackyIR as TackyProgram)
             val (asmAfterPseudo, stackSize) = ReplacePseudo().replace(asmAst)
             val finalAsmAst = FixupInstructions().fixup(asmAfterPseudo, stackSize)
@@ -185,6 +231,7 @@ class CompilerDriver {
                 "--lex" -> mode = Mode.LEX
                 "--parse" -> mode = Mode.PARSE
                 "--codegen" -> mode = Mode.CODEGEN
+                "--validate" -> mode = Mode.VALIDATE
                 "-S" -> emitAssembly = true
                 else -> inputFile = arg // Assume any other argument is an input file
             }
@@ -259,6 +306,7 @@ class CompilerDriver {
             Mode.LEX -> runLexMode(preprocessedFilePath)
             Mode.PARSE -> runParseMode(preprocessedFilePath)
             Mode.CODEGEN -> runCodeGenMode(preprocessedFilePath)
+            Mode.VALIDATE -> runValidateMode(preprocessedFilePath)
             else -> {
                 runDefaultMode(preprocessedFilePath,
                     defaultExecutableOutputFilePath(inputFile!!),
