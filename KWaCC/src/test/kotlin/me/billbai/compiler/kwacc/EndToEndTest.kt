@@ -1,15 +1,17 @@
 package me.billbai.compiler.kwacc
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.io.PrintWriter
 import kotlin.test.assertEquals
+import kotlin.test.assertContains
 
 class EndToEndTest {
 
     /**
      * Compiles a C source string through the full pipeline:
-     * Lex -> Parse -> TackyGen -> TackyToAsm -> ReplacePseudo -> Fixup -> Emit -> clang -> run
+     * Lex -> Parse -> VariableResolver -> TackyGen -> TackyToAsm -> ReplacePseudo -> Fixup -> Emit -> clang -> run
      *
      * Returns the exit code of the compiled program.
      */
@@ -27,9 +29,12 @@ class EndToEndTest {
         check(parseResult.errors.isEmpty()) { "Parser errors: ${parseResult.errors}" }
         val ast = parseResult.ast!!
 
+        // Semantic Analysis (Variable Resolution)
+        val resolvedAst = VariableResolver().resolveProgram(ast)
+
         // TackyGen
         val tackyGen = TackyGen()
-        val tackyProgram = ast.accept(tackyGen) as TackyProgram
+        val tackyProgram = resolvedAst.accept(tackyGen) as TackyProgram
 
         // TackyToAsm
         val asmAst = TackyToAsm().convert(tackyProgram)
@@ -291,5 +296,121 @@ class EndToEndTest {
     fun `not of relational`() {
         // !(1 > 2) → !0 → 1
         assertEquals(1, compileAndRun("int main(void) { return !(1 > 2); }"))
+    }
+
+    // --- Chapter 5: Local variables ---
+
+    @Test
+    fun `declare and return variable`() {
+        assertEquals(5, compileAndRun("int main(void) { int a = 5; return a; }"))
+    }
+
+    @Test
+    fun `assignment expression`() {
+        assertEquals(42, compileAndRun("""
+            int main(void) {
+                int a = 10;
+                int b;
+                b = a + 32;
+                return b;
+            }
+        """))
+    }
+
+    @Test
+    fun `chained assignment`() {
+        // a = b = c = 7; all three get 7, sum = 21
+        assertEquals(21, compileAndRun("""
+            int main(void) {
+                int a;
+                int b;
+                int c;
+                a = b = c = 7;
+                return a + b + c;
+            }
+        """))
+    }
+
+    @Test
+    fun `implicit return 0`() {
+        // No return statement — should return 0
+        assertEquals(0, compileAndRun("int main(void) { int x = 42; }"))
+    }
+
+    @Test
+    fun `uninitialized variable with later assignment`() {
+        assertEquals(99, compileAndRun("""
+            int main(void) {
+                int x;
+                x = 99;
+                return x;
+            }
+        """))
+    }
+
+    @Test
+    fun `multiple variables with arithmetic`() {
+        // a=3, b=4, return a*b + a = 12 + 3 = 15
+        assertEquals(15, compileAndRun("""
+            int main(void) {
+                int a = 3;
+                int b = 4;
+                return a * b + a;
+            }
+        """))
+    }
+
+    @Test
+    fun `assignment is an expression`() {
+        // return (a = 10) should return 10
+        assertEquals(10, compileAndRun("""
+            int main(void) {
+                int a;
+                return a = 10;
+            }
+        """))
+    }
+
+    @Test
+    fun `null statement`() {
+        assertEquals(1, compileAndRun("""
+            int main(void) {
+                int a = 1;
+                ;
+                return a;
+            }
+        """))
+    }
+
+    @Test
+    fun `expression statement side effect`() {
+        // a = 5 as expression statement, then a + 1 = 6
+        assertEquals(6, compileAndRun("""
+            int main(void) {
+                int a = 0;
+                a = 5;
+                return a + 1;
+            }
+        """))
+    }
+
+    // --- Chapter 5: Semantic errors ---
+
+    @Test
+    fun `duplicate variable declaration throws SemanticError`() {
+        val source = "int main(void) { int a = 1; int a = 2; return a; }"
+        val e = assertThrows<SemanticError> {
+            compileAndRun(source)
+        }
+        assertContains(e.message!!, "Duplicated variable declaration")
+    }
+
+    @Test
+    fun `undefined variable throws SemanticError`() {
+        val source = "int main(void) { return x; }"
+        val e = assertThrows<SemanticError> {
+            compileAndRun(source)
+        }
+        assertContains(e.message!!, "Undefined variable")
     }
 }

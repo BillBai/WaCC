@@ -4,54 +4,52 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class TackyGenTest {
-    @Test
-    fun `test tacky gen with unary operators`() {
-        val sourceFileInfo = SourceFileInfo("", "")
-        val input = "int main() { return -(~(-5)); }"
 
-        // Lex
+    /** Helper: source string → resolved AST */
+    private fun parseAndResolve(input: String): Program {
+        val sourceFileInfo = SourceFileInfo("", "")
         val lexer = Lexer(sourceFileInfo, input.byteInputStream())
         val tokenizeResult = lexer.tokenize()
         assertTrue(tokenizeResult.tokens.isNotEmpty())
 
-        // Parse
         val parser = Parser(tokenizeResult.tokenStream)
         val parseResult = parser.parse()
         assertTrue(parseResult.errors.isEmpty())
-        val ast = parseResult.ast!!
+        return VariableResolver().resolveProgram(parseResult.ast!!)
+    }
 
-        // TackyGen
+    @Test
+    fun `test tacky gen with unary operators`() {
+        val ast = parseAndResolve("int main() { return -(~(-5)); }")
+
         val tackyGen = TackyGen()
         val tackyProgram = ast.accept(tackyGen)
         assertTrue(tackyProgram is TackyProgram)
 
-        // Print it out with the pretty printer
         val printer = TackyPrettyPrinter()
         println(printer.print(tackyProgram as TackyProgram))
     }
 
     @Test
     fun `test tacky gen with binary operators`() {
-        val sourceFileInfo = SourceFileInfo("", "")
-        val input = "int main() { return 1 + 2 * 3; }"
+        val ast = parseAndResolve("int main() { return 1 + 2 * 3; }")
 
-        // Lex
-        val lexer = Lexer(sourceFileInfo, input.byteInputStream())
-        val tokenizeResult = lexer.tokenize()
-        assertTrue(tokenizeResult.tokens.isNotEmpty())
-
-        // Parse
-        val parser = Parser(tokenizeResult.tokenStream)
-        val parseResult = parser.parse()
-        assertTrue(parseResult.errors.isEmpty())
-        val ast = parseResult.ast!!
-
-        // TackyGen
         val tackyGen = TackyGen()
         val tackyProgram = ast.accept(tackyGen)
         assertTrue(tackyProgram is TackyProgram)
 
-        // Print it out with the pretty printer
+        val printer = TackyPrettyPrinter()
+        println(printer.print(tackyProgram as TackyProgram))
+    }
+
+    @Test
+    fun `test tacky gen with variable declaration and assignment`() {
+        val ast = parseAndResolve("int main(void) { int a = 5; int b; b = a + 1; return b; }")
+
+        val tackyGen = TackyGen()
+        val tackyProgram = ast.accept(tackyGen)
+        assertTrue(tackyProgram is TackyProgram)
+
         val printer = TackyPrettyPrinter()
         println(printer.print(tackyProgram as TackyProgram))
     }
