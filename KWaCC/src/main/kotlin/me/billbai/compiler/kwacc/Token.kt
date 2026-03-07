@@ -6,6 +6,8 @@ sealed class Token {
         INT,
         VOID,
         RETURN,
+        IF,
+        ELSE,
     }
 
     data class Identifier(val value: String): Token()
@@ -39,6 +41,9 @@ sealed class Token {
 
     object Equal: Token()
 
+    object QuestionMark: Token()
+    object Colon: Token()
+
     object EndOfFile: Token()
 
     override fun toString(): String {
@@ -69,6 +74,8 @@ sealed class Token {
             is LogicalOr -> "LogicalOr"
             is NotEqual -> "NotEqual"
             is Equal -> "Equal"
+            is Colon -> "Colon"
+            is QuestionMark -> "QuestionMark"
         }
     }
 

@@ -4,8 +4,8 @@ Look up content from the "Writing a C Compiler" book for the current chapter.
 
 Arguments: chapter number (e.g., 6), optional: specific topic (e.g., "TACKY IR", "parsing", "assembly")
 
-Book location: `/home/bill/Documents/Books/Writing_a_C_Compiler/chapter{N}.md`
-Appendices: `/home/bill/Documents/Books/Writing_a_C_Compiler/appendix-A.md`, `appendix-B.md`
+The book is a directory of markdown files (chapter1.md through chapter20.md, plus appendix-A.md and appendix-B.md).
+Read the book path from LOCAL.md in the project root. If LOCAL.md doesn't exist, ask the user for the path and create it.
 
 1. Read the requested chapter from the book
 2. If a topic is specified, find the relevant section

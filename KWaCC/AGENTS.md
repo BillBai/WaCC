@@ -34,10 +34,29 @@ When adding boilerplate code (e.g., new visitor method implementations, new enum
 ```bash
 ./gradlew build              # Build
 ./gradlew run --args="..."   # Run (e.g., --parse test_code/hello.c)
-./gradlew test               # Test
+./gradlew test               # Unit tests
+./gradlew install            # Build compiler binary (for book tests)
 ```
 
 **Requires:** `clang` or `gcc` on PATH for preprocessing, linking and assembling.
+
+## Local Machine Info
+
+See [LOCAL.md](LOCAL.md) (gitignored) for machine-specific paths:
+- **Book content** — extracted chapter markdown files
+- **Book test suite** — the `test_compiler` script from the book's repo
+
+If `LOCAL.md` doesn't exist, ask the user for these paths and create it.
+
+## Skills
+
+| Skill | Description |
+|-------|-------------|
+| `/wacc-resume` | Resume a learning session — loads context, reviews progress |
+| `/book-ref <N>` | Look up chapter N from the book |
+| `/test-chapter <N>` | Build and run the book's test suite for chapter N |
+| `/chapter-done` | End-of-chapter workflow: test, commit, update journal |
+| `/commit` | Run tests, commit, push |
 
 ## Documentation
 

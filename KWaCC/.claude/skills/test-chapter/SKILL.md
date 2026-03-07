@@ -1,10 +1,12 @@
 # Test Chapter
 
-Run the test suite for a specific chapter to verify the compiler implementation.
+Run the book's test suite for a specific chapter to verify the compiler implementation.
 
-Arguments: chapter number (e.g., 5)
+Arguments: chapter number (e.g., 5), optional: stage (lex, parse, validate, or omit for full run)
 
-1. Run `./gradlew test` to ensure all existing tests pass
-2. Report results clearly: which tests passed, which failed
-3. For failures, consult the book chapter at `/home/bill/Documents/Books/Writing_a_C_Compiler/chapter{N}.md` for expected behavior
-4. Hint at what compiler pass might need attention based on the chapter's content
+Read the test suite path from LOCAL.md in the project root. If LOCAL.md doesn't exist, ask the user for the path and create it.
+
+1. Build the compiler: `./gradlew install`
+2. Run the book's test script: `<test_suite_dir>/test_compiler <project_root>/build/install/KWaCC/bin/KWaCC --chapter <N> [--stage <stage>]`
+3. Report results clearly: which tests passed, which failed
+4. For failures, hint at what compiler pass might need attention

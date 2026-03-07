@@ -90,6 +90,8 @@ class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
             "int" -> Token.Keyword(Token.KeywordType.INT)
             "void" -> Token.Keyword(Token.KeywordType.VOID)
             "return" -> Token.Keyword(Token.KeywordType.RETURN)
+            "if" -> Token.Keyword(Token.KeywordType.IF)
+            "else" -> Token.Keyword(Token.KeywordType.ELSE)
             else -> Token.Identifier(identOrKeyword)
         }
     }
@@ -169,6 +171,8 @@ class Lexer(sourceFileInfo: SourceFileInfo, inputStream: InputStream) {
                     '*' -> TokenResult.Success(Token.Asterisk, curLoc)
                     '/' -> TokenResult.Success(Token.Slash, curLoc)
                     '%' -> TokenResult.Success(Token.Percent, curLoc)
+                    '?' -> TokenResult.Success(Token.QuestionMark, curLoc)
+                    ':' -> TokenResult.Success(Token.Colon, curLoc)
                     '!' -> {
                         val nextChar = peek()
                         if (nextChar == '=') {

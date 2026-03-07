@@ -44,6 +44,9 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### Local machine config ###
+LOCAL.md
+
 ### Test code build artifacts ###
 test_code/*
 !test_code/*.c
