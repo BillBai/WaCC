@@ -155,4 +155,12 @@ class AstPrettyPrinter : AstVisitor<String> {
     override fun visitBlockItemDeclaration(node: BlockItemDeclaration): String {
         return "BlockItemDecl(decl=${node.declaration.accept(this)})"
     }
+
+    override fun visitIfStmt(node: IfStmt): String {
+        return "IfStmt(cond=${node.condition.accept(this)}, \nthen=${node.thenBranch.accept(this)}, \nelse=${node.elseBranch?.accept(this)})"
+    }
+
+    override fun visitConditionalExpression(node: ConditionalExpression): String {
+        return "CondExpr(cond=${node.condition.accept(this)}, \nthen=${node.thenExpr.accept(this)}, \nelse=${node.elseExpr.accept(this)})"
+    }
 }

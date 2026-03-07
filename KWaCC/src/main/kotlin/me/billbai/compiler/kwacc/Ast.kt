@@ -149,6 +149,18 @@ object NullStmt: Statement() {
 
 }
 
+
+data class IfStmt(
+    val condition: Expression,
+    val thenBranch: Statement,
+    val elseBranch: Statement?
+): Statement() {
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitIfStmt(this)
+    }
+}
+
+
 data class Declaration(val name: String, val initializer: Expression?): AstNode() {
     override fun <T> accept(visitor: AstVisitor<T>): T {
         return visitor.visitDeclaration(this)
@@ -242,5 +254,23 @@ object LessOrEqualOperator: BinaryOperator() {
 object GreaterOrEqualOperator: BinaryOperator() {
     override fun <T> accept(visitor: AstVisitor<T>): T {
         return visitor.visitGreaterOrEqualOperator(this)
+    }
+}
+
+data class ConditionalExpression(
+    val condition: Expression,
+    val thenExpr: Expression,
+    val elseExpr: Expression
+): Expression(null) {
+    constructor(
+        condition: Expression,
+        thenExpr: Expression,
+        elseExpr: Expression,
+        type: Type?): this(condition, thenExpr, elseExpr) {
+        this.type = type
+    }
+
+    override fun <T> accept(visitor: AstVisitor<T>): T {
+        return visitor.visitConditionalExpression(this)
     }
 }

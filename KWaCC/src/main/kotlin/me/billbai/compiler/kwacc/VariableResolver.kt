@@ -54,6 +54,13 @@ class VariableResolver {
                     throw SemanticError("Undefined variable ${expression.name}")
                 }
             }
+            is ConditionalExpression -> {
+                ConditionalExpression(
+                    condition = resolveExpression(expression.condition)!!,
+                    thenExpr = resolveExpression(expression.thenExpr)!!,
+                    elseExpr = resolveExpression(expression.elseExpr)!!
+                )
+            }
             null -> null
         }
     }
@@ -80,7 +87,13 @@ class VariableResolver {
             is ReturnStmt -> ReturnStmt(resolveExpression(statement.expression))
             is BlockStmt -> resolveBlockStmt(statement)
             is ExpressionStmt -> ExpressionStmt(resolveExpression(statement.expression)!!)
-            NullStmt -> statement
+            is IfStmt -> {
+                IfStmt(condition = resolveExpression(statement.condition)!!,
+                    thenBranch = resolveStatement(statement.thenBranch),
+                    elseBranch = statement.elseBranch?.let {resolveStatement(it)}
+                )
+            }
+            is NullStmt -> statement
         }
     }
 

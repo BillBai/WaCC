@@ -159,11 +159,71 @@ class Parser(
         return BlockStmt(blockItems)
     }
 
+    private fun parseIfStatement(): IfStmt? {
+        val token = peek()
+        check(token is Token.Keyword && token.keywordType == Token.KeywordType.IF)
+
+        // consume the if keyword
+        advance()
+
+        // parse conditional expression
+        val openParen = peek()
+        if (openParen !is Token.OpenParen) {
+            addError("Expect '('")
+            return null
+        }
+        advance()
+
+        val condExpr = parseExpression(0)
+        if (condExpr == null) {
+            addError("Invalid conditional expression")
+            return null
+        }
+
+        val closeParen = peek()
+        if (closeParen !is Token.CloseParen) {
+            addError("Expect ')'")
+            return null
+        }
+        advance()
+
+        // parse then block
+        val thenBranch = parseStatement()
+
+        if (thenBranch == null) {
+            addError("Invalid then branch")
+            return null
+        }
+
+        var elseBranch: Statement? = null
+        val elseToken = peek()
+        if (elseToken is Token.Keyword && elseToken.keywordType == Token.KeywordType.ELSE) {
+            advance()
+            val stmt = parseStatement()
+            if (stmt == null) {
+                addError("Invalid else branch")
+                return null
+            }
+            elseBranch = stmt
+        }
+
+        return IfStmt(condExpr, thenBranch, elseBranch)
+    }
+
     private fun parseStatement(): Statement? {
         val token = peek()
+        if (peek() is Token.OpenBrace) {
+            return parseBlockStatement()
+        }
+
         if (token is Token.Semicolon) {
             advance()
             return NullStmt
+        }
+        if (token is Token.Keyword) {
+            if (token.keywordType == Token.KeywordType.IF) {
+                return parseIfStatement()
+            }
         }
 
         if (token is Token.Keyword && token.keywordType == Token.KeywordType.RETURN) {

@@ -324,4 +324,12 @@ class TackyGen() : AstVisitor<TackyNode> {
     override fun visitBlockItemDeclaration(node: BlockItemDeclaration): TackyNode {
         return node.declaration.accept(this)
     }
+
+    override fun visitIfStmt(node: IfStmt): TackyNode {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitConditionalExpression(node: ConditionalExpression): TackyNode {
+        TODO("Not yet implemented")
+    }
 }
