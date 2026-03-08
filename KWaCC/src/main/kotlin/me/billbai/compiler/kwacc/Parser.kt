@@ -402,6 +402,7 @@ class Parser(
             Token.LessThan,
             Token.LessOrEqual,
             Token.Equal,
+            Token.QuestionMark,
         )
         return binaryOperators.contains(token)
     }
@@ -426,6 +427,8 @@ class Parser(
             Token.LogicalAnd to 10,
 
             Token.LogicalOr to 5,
+
+            Token.QuestionMark to 3,
 
             Token.Equal to 1,
         )
@@ -465,23 +468,48 @@ class Parser(
         var left = parseFactor() ?: return null
         var nextToken = peek()
         while (isBinaryOperator(nextToken) && (operatorPrecedence(nextToken) >= minPrecedence)) {
-            if (nextToken == Token.Equal) {
-                advance()
-                val right = parseExpression(operatorPrecedence(nextToken))
-                if (right == null) {
-                    addError("malformed right hand side")
-                    return null
+            when (nextToken) {
+                Token.Equal -> {
+                    advance()
+                    val right = parseExpression(operatorPrecedence(nextToken))
+                    if (right == null) {
+                        addError("malformed right hand side")
+                        return null
+                    }
+                    left = AssignmentExpression(left, right)
                 }
-                left = AssignmentExpression(left, right)
-            } else {
-                val binaryOp = parseBinaryOperator(nextToken)
-                check(binaryOp != null)
-                val right = parseExpression(operatorPrecedence(nextToken) + 1)
-                if (right == null) {
-                    addError("malformed right hand side")
-                    return null
+                Token.QuestionMark -> {
+                    advance()
+                    val middle = parseExpression(0)
+                    if (middle == null) {
+                        addError("malformed conditional expression. expecting expr after '?'")
+                        return null
+                    }
+
+                    val colon = peek()
+                    if (colon != Token.Colon) {
+                        addError("Expecting ':'")
+                        return null
+                    }
+                    advance()
+
+                    val right = parseExpression(operatorPrecedence(nextToken))
+                    if (right == null) {
+                        addError("malformed conditional expression. expecting expr after ':'")
+                        return null
+                    }
+                    left = ConditionalExpression(left, middle, right)
                 }
-                left = BinaryExpression(binaryOp, left, right)
+                else -> {
+                    val binaryOp = parseBinaryOperator(nextToken)
+                    check(binaryOp != null)
+                    val right = parseExpression(operatorPrecedence(nextToken) + 1)
+                    if (right == null) {
+                        addError("malformed right hand side")
+                        return null
+                    }
+                    left = BinaryExpression(binaryOp, left, right)
+                }
             }
             nextToken = peek()
         }
