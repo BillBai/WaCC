@@ -1250,3 +1250,127 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Add `Return(0)` at end of every function body
 - Wire VariableResolver into CompilerDriver pipeline
 - Add `--validate` CLI option
+
+---
+
+## Session 2026-02-26
+
+### Topics Covered
+- Completed TackyGen for Chapter 5 nodes
+- Finished `visitAssignmentExpression` — emit `TackyCopyInst`, return the assigned value
+- Implemented `visitDeclaration` — handle `int x;` vs `int x = 5;`
+
+### Changes Made
+- Finished `visitAssignmentExpression` — emits `TackyCopyInst(rhs, lhs)`, returns lhs as the value
+- Implemented `visitDeclaration` — evaluates initializer (if present), copies to variable
+
+---
+
+## Session 2026-02-27
+
+### Topics Covered
+- Added implicit `Return(0)` at end of every function body for Chapter 5
+
+### Key Learnings
+
+**C Standard Implicit Return:**
+- If `main` falls off the end without `return`, the behavior is `return 0`
+- The book requires appending `Return(IntConstant(0))` to every function body in TackyGen
+- This ensures every code path has a return instruction for the assembly backend
+
+### Changes Made
+- Added `Return(TackyConstantVal(0))` at end of every function body in TackyGen
+
+---
+
+## Session 2026-02-28
+
+### Topics Covered
+- Wired VariableResolver into CompilerDriver pipeline
+- Added `--validate` CLI mode (lex + parse + semantic analysis, no codegen)
+
+### Changes Made
+- Added `performSemanticAnalysis()` to CompilerDriver — calls `VariableResolver().resolveProgram(ast)`
+- Updated `runCodeGenMode()` and `runDefaultMode()` to run semantic analysis before TackyGen
+- Added `Mode.VALIDATE` and `runValidateMode()` — stops after semantic analysis
+- Fixed VariableResolver: minor bug fixes in resolution
+
+---
+
+## Session 2026-03-01
+
+### Topics Covered
+- **CHAPTER 5 COMPLETE** — All book tests passing
+- Added comprehensive unit tests for Chapter 5 features
+
+### Changes Made
+- Added `EndToEndTest.kt` tests: variable declarations, assignments, chained assignment, implicit return
+- Added semantic error tests: duplicate declarations, undefined variables
+- Updated `TackyGenTest.kt` for new Chapter 5 nodes
+- Added test C files: `ch5_var.c`, `ch5_assign.c`, `ch5_chain.c`, `ch5_implicit_return.c`, `ch5_err_dup.c`, `ch5_err_undef.c`
+
+---
+
+## Session 2026-03-02 to 2026-03-06
+
+### Topics Covered
+- Built out Claude Code tooling: hooks, skills, and subagents
+
+### Changes Made
+- Added Claude Code hooks: auto-test on `.kt` edits, PROGRESS.md edit warning
+- Created `/chapter-done` skill — test, commit, journal workflow
+- Created `/test-chapter` skill — build and run book's test suite for a chapter
+- Created `/book-ref` skill — look up chapter content from the book
+- Created `compiler-reviewer` subagent — checks visitor completeness, operand ordering
+- Tracked existing `/commit` skill in git
+
+---
+
+## Session 2026-03-07
+
+### Topics Covered
+- Started Chapter 6: Conditional Statements
+- Added lexer tokens for `if`, `else`, `?`, `:`
+- Added AST nodes and visitor stubs for `IfStmt` and `ConditionalExpression`
+
+### Key Learnings
+
+**Chapter 6 Scope:**
+- `IfStmt` — `if (condition) thenBranch else elseBranch` (else is optional)
+- `ConditionalExpression` — ternary `condition ? thenExpr : elseExpr`
+- Both need TackyGen with conditional jumps (similar pattern to `&&`/`||` short-circuiting)
+
+### Changes Made
+- Added `Token.If`, `Token.Else`, `Token.QuestionMark`, `Token.Colon` to Token.kt
+- Updated Lexer to recognize `if` and `else` keywords
+- Added `IfStmt` and `ConditionalExpression` to Ast.kt
+- Added visitor methods: `visitIfStmt`, `visitConditionalExpression` to AstVisitor
+- Added pretty printer and TackyGen stubs
+- Added VariableResolver handling for `IfStmt` and `ConditionalExpression`
+
+---
+
+## Session 2026-03-08
+
+### Topics Covered
+- Implemented conditional expression (ternary `?:`) parsing with precedence climbing
+- Updated parser for `if`/`else` statements
+
+### Key Learnings
+
+**Ternary as Right-Associative in Precedence Climbing:**
+- `?:` has very low precedence (just above assignment `=`)
+- Right-associative: `a ? b : c ? d : e` → `a ? b : (c ? d : e)`
+- Parsing trick: after the `?`, parse the middle expression at minimum precedence (any expression allowed between `?` and `:`)
+- After the `:`, recurse at ternary's own precedence for right-associativity
+
+### Changes Made
+- Added `parseIfStatement()` to Parser — handles optional else branch
+- Added ternary `?:` parsing in `parseExpression()` precedence climbing loop
+- Updated `parseStatement()` to dispatch `if` keyword to `parseIfStatement()`
+
+### Next Session Ideas
+- Implement TackyGen for `IfStmt` — conditional jumps to then/else branches
+- Implement TackyGen for `ConditionalExpression` — similar jump pattern
+- Run Chapter 6 tests
+- Possibly: labeled statements, `goto` (if Chapter 6 covers those)
