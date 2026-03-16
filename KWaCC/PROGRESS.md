@@ -1374,3 +1374,15 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 - Implement TackyGen for `ConditionalExpression` — similar jump pattern
 - Run Chapter 6 tests
 - Possibly: labeled statements, `goto` (if Chapter 6 covers those)
+
+---
+
+## Session 2026-03-16
+
+### Topics Covered
+- Reviewed TackyGen approach for Chapter 6 conditional statements
+- Studied how `if`/`else` maps to conditional jumps in TACKY IR
+
+### Key Learnings
+- `IfStmt` codegen: evaluate condition → `JumpIfZero` to else/end label → emit then → jump to end → else label → emit else → end label
+- Same pattern as short-circuit eval from Chapter 4, but at statement level
