@@ -1,6 +1,6 @@
 # KWaCC Style Guide
 
-Coding conventions and contributor guidelines.
+Coding conventions and patterns for the KWaCC compiler.
 
 ## Coding Style
 
