@@ -1386,3 +1386,11 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 ### Key Learnings
 - `IfStmt` codegen: evaluate condition → `JumpIfZero` to else/end label → emit then → jump to end → else label → emit else → end label
 - Same pattern as short-circuit eval from Chapter 4, but at statement level
+
+---
+
+## Session 2026-03-18
+
+### Topics Covered
+- Studied label generation strategy for conditional jumps
+- Reviewed UniqueNameGenerator to confirm label uniqueness across nested conditionals
