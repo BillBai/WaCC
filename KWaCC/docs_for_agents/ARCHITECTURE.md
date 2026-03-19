@@ -31,7 +31,7 @@ Detailed architecture reference for AI agents working on this codebase.
 | **AstPrettyPrinter** | `AstPrettyPrinter.kt` | Readable AST for debugging |
 | **VariableResolver** | `VariableResolver.kt` | Semantic analysis: renames variables to unique names, detects duplicate/undefined |
 | **UniqueNameGenerator** | `UniqueNameGenerator.kt` | Singleton counter shared between VariableResolver and TackyGen |
-| **TackyGen** | `TackyGen.kt` | Lowers AST to three-address code IR (TACKY). Uses emit-and-return pattern — see [EMIT_AND_RETURN.md](../docs/EMIT_AND_RETURN.md) |
+| **TackyGen** | `TackyGen.kt` | Lowers AST to three-address code IR (TACKY). Handles control flow via conditional jumps. Uses emit-and-return pattern — see [EMIT_AND_RETURN.md](../docs/EMIT_AND_RETURN.md) |
 | **Tacky** | `Tacky.kt` | Sealed node hierarchy for TACKY IR |
 | **TackyPrettyPrinter** | `TackyPrettyPrinter.kt` | Readable TACKY IR for debugging |
 | **TackyToAsm** | `TackyToAsm.kt` | Converts TACKY IR to x86-64 pseudo-assembly |
