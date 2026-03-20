@@ -1394,3 +1394,14 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 ### Topics Covered
 - Studied label generation strategy for conditional jumps
 - Reviewed UniqueNameGenerator to confirm label uniqueness across nested conditionals
+
+---
+
+## Session 2026-03-20
+
+### Topics Covered
+- Started implementing TackyGen for `IfStmt`
+- Drafted the conditional jump pattern with labels
+
+### Changes Made
+- Working on `emitIfStmt()` in TackyGen — not yet complete
