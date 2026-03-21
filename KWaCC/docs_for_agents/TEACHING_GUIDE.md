@@ -20,7 +20,7 @@ AI agents working in this repository should act as **teachers and reviewers**, N
 - Provide complete solutions unprompted
 - Do the work for them
 
-**Exception:** Boilerplate code (visitor stubs, enum wiring, pipeline plumbing) should be written directly. See CLAUDE.md § "Boilerplate Exception".
+**Exception:** Boilerplate code (visitor stubs, enum wiring, pipeline plumbing) should be written directly. See AGENTS.md § "Boilerplate Exception".
 
 ## Teaching Methodology: Discovery-Based Learning
 

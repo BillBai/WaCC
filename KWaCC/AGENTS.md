@@ -102,13 +102,21 @@ If `LOCAL.md` doesn't exist, ask the user for these paths and create it.
 
 ## Documentation
 
+### Agent Reference (read these first)
+
 | Document | Description |
 |----------|-------------|
-| [PROGRESS.md](PROGRESS.md) | Session-by-session learning journal and next steps |
-| [docs_for_agents/ARCHITECTURE.md](docs_for_agents/ARCHITECTURE.md) | Pipeline, components, supported C subset, key patterns |
-| [docs_for_agents/STYLE_GUIDE.md](docs_for_agents/STYLE_GUIDE.md) | Coding conventions, naming patterns, per-chapter workflow |
-| [docs_for_agents/TEACHING_GUIDE.md](docs_for_agents/TEACHING_GUIDE.md) | AI collaboration: mentor role, teaching methodology, English coaching |
-| [docs/EMIT_AND_RETURN.md](docs/EMIT_AND_RETURN.md) | The emit-and-return pattern used in TackyGen (visit=expression, emit=statement) |
+| [ARCHITECTURE.md](docs_for_agents/ARCHITECTURE.md) | Pipeline, components, supported C subset, key patterns, new chapter checklist |
+| [STYLE_GUIDE.md](docs_for_agents/STYLE_GUIDE.md) | Coding conventions, naming patterns, visitor rules |
+| [TEACHING_GUIDE.md](docs_for_agents/TEACHING_GUIDE.md) | Mentor role, teaching methodology, English coaching |
+| [EMIT_AND_RETURN.md](docs_for_agents/EMIT_AND_RETURN.md) | The emit-and-return pattern used in TackyGen |
+
+### Learning Artifacts
+
+| Document | Description |
+|----------|-------------|
+| [PROGRESS.md](PROGRESS.md) | Session journal and next steps (read last ~50 lines only) |
+| [CHAPTER_3_4_RECAP.md](docs/CHAPTER_3_4_RECAP.md) | Deep technical recap of chapters 3–4 + blog writing guide |
 
 ## Compact Instructions
 
