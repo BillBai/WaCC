@@ -88,3 +88,8 @@ return tmp.2
 - **Statements** → `emit`, returns Unit (side effect only)
 
 This distinction matters because expressions always produce a value, statements don't.
+## Control Flow Extensions (Chapter 6)
+
+The emit-and-return pattern extends naturally to control flow:
+- `emitIfStmt` emits conditional jumps but returns Unit (statement-level)
+- `visitConditionalExpression` emits jumps AND returns a TackyVal (expression-level, uses a result variable)
