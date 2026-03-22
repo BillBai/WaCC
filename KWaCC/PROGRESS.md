@@ -1405,3 +1405,14 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 
 ### Changes Made
 - Working on `emitIfStmt()` in TackyGen — not yet complete
+
+---
+
+## Session 2026-03-22
+
+### Topics Covered
+- Worked on TackyGen for `ConditionalExpression` (ternary `?:`)
+- Key difference from `IfStmt`: ternary is an expression, needs a result variable
+
+### Key Learnings
+- Ternary codegen: eval condition → JumpIfZero to else → eval then → copy to result → jump end → else label → eval else → copy to result → end label → return result
