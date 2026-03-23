@@ -45,7 +45,7 @@ Detailed architecture reference for AI agents working on this codebase.
 
 *All files in `src/main/kotlin/me/billbai/compiler/kwacc/`*
 
-## Supported C Subset (Chapters 1–5 complete, Chapter 6 in progress)
+## Supported C Subset (Chapters 1–5 complete, Chapter 6 conditionals in progress)
 
 | Chapter | Features |
 |---------|----------|
