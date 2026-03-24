@@ -1416,3 +1416,11 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 
 ### Key Learnings
 - Ternary codegen: eval condition → JumpIfZero to else → eval then → copy to result → jump end → else label → eval else → copy to result → end label → return result
+
+---
+
+## Session 2026-03-24
+
+### Topics Covered
+- Ran partial Chapter 6 tests — some passing, some still failing
+- Debugging label ordering in nested if/else
