@@ -39,6 +39,7 @@ Each layer uses a consistent prefix to avoid ambiguity:
   - `emit*` methods = statements → return `Unit`
 - **Short-circuit evaluation** (Chapter 4): `&&` and `||` use `JumpIfZero`/`JumpIfNotZero` with labels, not binary instructions
 - **Conditional codegen** (Chapter 6): `if`/`else` and ternary `?:` use jump/label patterns
+- **Label naming** (Chapter 6): Use descriptive prefixes for generated labels — `if_else.`, `if_end.`, `ternary_else.`, `ternary_end.`
 
 ## Adding New Language Features (Per-Chapter Pattern)
 
