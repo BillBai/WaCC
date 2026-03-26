@@ -1424,3 +1424,11 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 ### Topics Covered
 - Ran partial Chapter 6 tests — some passing, some still failing
 - Debugging label ordering in nested if/else
+
+---
+
+## Session 2026-03-26
+
+### Topics Covered
+- Fixed nested conditional label generation bug
+- Labels now use UniqueNameGenerator for guaranteed uniqueness
