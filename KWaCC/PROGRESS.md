@@ -1432,3 +1432,12 @@ Chinese New Year. 新年快乐! Short session but steady progress.
 ### Topics Covered
 - Fixed nested conditional label generation bug
 - Labels now use UniqueNameGenerator for guaranteed uniqueness
+
+---
+
+## Session 2026-03-27
+
+### Topics Covered
+- Reviewed all Chapter 6 TackyGen code
+- Cleaned up conditional jump patterns
+- Ready to run full Chapter 6 test suite next session
